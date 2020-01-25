@@ -49,3 +49,9 @@ variable "hosted_zone" {
 variable "url" {
   description = "The full url to the jenkins host"
 }
+
+variable "prefix" {
+  description = "Prefix used in naming resources"
+  type        = string
+  default     = "jenkins"
+}

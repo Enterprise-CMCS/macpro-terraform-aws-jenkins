@@ -3,8 +3,8 @@ data "aws_vpc" "vpc" {
   id = var.vpc_id
 }
 
-resource "aws_security_group" "jenkins_host" {
-  name        = "jenkins_ecs_${var.name}"
+resource "aws_security_group" "ecs_host" {
+  name        = "${var.prefix}-ecs-host-${var.name}"
   description = "Allows 8080 traffic"
   vpc_id      = var.vpc_id
   ingress {
@@ -17,7 +17,7 @@ resource "aws_security_group" "jenkins_host" {
     from_port       = 8080
     to_port         = 8080
     protocol        = "tcp"
-    security_groups = [aws_security_group.jenkins_alb.id]
+    security_groups = [aws_security_group.alb.id]
   }
   egress {
     from_port = 0
@@ -29,8 +29,8 @@ resource "aws_security_group" "jenkins_host" {
   }
 }
 
-resource "aws_ecs_cluster" "jenkins" {
-  name = "jenkins_ecs_${var.name}"
+resource "aws_ecs_cluster" "cluster" {
+  name = "${var.prefix}-${var.name}"
 }
 
 data "aws_ami" "ecs_optimized" {
@@ -50,15 +50,18 @@ data "aws_ami" "ecs_optimized" {
   }
 }
 
+data "aws_region" "this" {}
+
 data "template_file" "user_data" {
   template = file("${path.module}/templates/user_data.tpl")
   vars = {
-    ecs_cluster_name = "jenkins_ecs_${var.name}"
+    ecs_cluster_name = "${var.prefix}-${var.name}"
+    ebs_region       = data.aws_region.this.name
   }
 }
 
 resource "aws_iam_role" "ecs_host" {
-  name               = "jenkins-ecs-host-${var.name}"
+  name               = "${var.prefix}-ecs-host-${var.name}"
   assume_role_policy = <<EOF
 {
   "Version": "2008-10-17",
@@ -77,9 +80,8 @@ resource "aws_iam_role" "ecs_host" {
 EOF
 }
 
-# Create an IAM policy for the jenkins instance, using the template rendered above.
 resource "aws_iam_role_policy" "ecs_host" {
-  name   = "jenkins-ecs-host-${var.name}"
+  name   = "${var.prefix}-ecs-host-${var.name}"
   role   = aws_iam_role.ecs_host.id
   policy = <<EOF
 {
@@ -135,19 +137,18 @@ resource "aws_iam_role_policy" "ecs_host" {
 EOF
 }
 
-# Create an IAM profile for the jenkins host.
 resource "aws_iam_instance_profile" "ecs_host" {
-  name = "jenkins-ecs-host${var.name}"
+  name = "${var.prefix}-ecs-host${var.name}"
   path = "/"
   role = aws_iam_role.ecs_host.name
 }
 
 
-resource "aws_launch_configuration" "jenkins" {
-  name_prefix                 = "jenkins_ecs_${var.name}"
+resource "aws_launch_configuration" "ecs_host" {
+  name_prefix                 = "${var.prefix}-${var.name}"
   image_id                    = data.aws_ami.ecs_optimized.id
   instance_type               = var.instance_type
-  security_groups             = flatten([aws_security_group.jenkins_host.id, var.host_security_groups])
+  security_groups             = flatten([aws_security_group.ecs_host.id, var.host_security_groups])
   key_name                    = var.host_key_name
   associate_public_ip_address = false
   iam_instance_profile        = aws_iam_instance_profile.ecs_host.name
@@ -161,14 +162,14 @@ resource "aws_launch_configuration" "jenkins" {
   }
 }
 
-resource "aws_autoscaling_group" "asg_jenkins" {
-  name                      = "jenkins_ecs_${var.name}"
+resource "aws_autoscaling_group" "ecs_host" {
+  name                      = "${var.prefix}-${var.name}"
   min_size                  = 1
   max_size                  = 2
   desired_capacity          = 1
   health_check_type         = "EC2"
   health_check_grace_period = 300
-  launch_configuration      = aws_launch_configuration.jenkins.name
+  launch_configuration      = aws_launch_configuration.ecs_host.name
   vpc_zone_identifier       = var.auto_scaling_subnets
 
   lifecycle {
@@ -178,14 +179,14 @@ resource "aws_autoscaling_group" "asg_jenkins" {
   tags = [
     {
       key                 = "Name"
-      value               = "jenkins_ecs_${var.name}"
+      value               = "${var.prefix}-${var.name}"
       propagate_at_launch = true
     },
   ]
 }
 
-resource "aws_iam_role" "jenkins" {
-  name               = "jenkins_ecs_${var.name}"
+resource "aws_iam_role" "ecs_task" {
+  name               = "${var.prefix}-ecs-task-${var.name}"
   assume_role_policy = <<EOF
 {
   "Version": "2008-10-17",
@@ -204,29 +205,26 @@ resource "aws_iam_role" "jenkins" {
 EOF
 }
 
-data "template_file" "ecs_task_jenkins_policy" {
-  template = file("${path.module}/templates/ecs-task-jenkins-policy.tpl")
-  vars = {
-    jenkins_state_bucket = "asdf"
-  }
+data "template_file" "ecs_task_policy" {
+  template = file("${path.module}/templates/ecs-task-policy.json.tpl")
 }
 
-resource "aws_iam_role_policy" "jenkins" {
-  name   = "jenkins_ecs_${var.name}"
-  policy = data.template_file.ecs_task_jenkins_policy.rendered
-  role   = aws_iam_role.jenkins.id
+resource "aws_iam_role_policy" "ecs_task" {
+  name   = "${var.prefix}-ecs-task-${var.name}"
+  policy = data.template_file.ecs_task_policy.rendered
+  role   = aws_iam_role.ecs_host.id
 }
 
-data "template_file" "jenkins_task_template" {
-  template = file("${path.module}/templates/jenkins.json.tpl")
+data "template_file" "ecs_task" {
+  template = file("${path.module}/templates/ecs-task.json.tpl")
   vars = {
     image = var.image
   }
 }
 
-resource "aws_ecs_task_definition" "jenkins" {
-  family                = "jenkins-ecs-${var.name}"
-  container_definitions = data.template_file.jenkins_task_template.rendered
+resource "aws_ecs_task_definition" "ecs_task" {
+  family                = "${var.prefix}-${var.name}"
+  container_definitions = data.template_file.ecs_task.rendered
   network_mode          = "host"
   volume {
     name = "jenkins_home"
@@ -254,29 +252,24 @@ resource "aws_ecs_task_definition" "jenkins" {
   }
 }
 
-resource "aws_ecs_service" "jenkins" {
-  name                              = "jenkins_ecs_${var.name}"
-  cluster                           = aws_ecs_cluster.jenkins.id
-  task_definition                   = aws_ecs_task_definition.jenkins.arn
+resource "aws_ecs_service" "ecs_service" {
+  name                              = "${var.prefix}-${var.name}"
+  cluster                           = aws_ecs_cluster.cluster.id
+  task_definition                   = aws_ecs_task_definition.ecs_task.arn
   desired_count                     = 1
   health_check_grace_period_seconds = 600
 
   load_balancer {
-    target_group_arn = aws_alb_target_group.jenkins.id
+    target_group_arn = aws_alb_target_group.target_group.id
     container_name   = "jenkins"
     container_port   = "8080"
   }
 
-  depends_on = [aws_autoscaling_group.asg_jenkins]
+  depends_on = [aws_autoscaling_group.ecs_host]
 }
 
-
-
-
-
-
-resource "aws_security_group" "jenkins_alb" {
-  name        = "jenkins_ecs_alb_${var.name}"
+resource "aws_security_group" "alb" {
+  name        = "${var.prefix}-alb-${var.name}"
   description = "Allow 443 and 80"
   vpc_id      = var.vpc_id
   ingress {
@@ -301,8 +294,8 @@ resource "aws_security_group" "jenkins_alb" {
   }
 }
 
-resource "aws_alb_target_group" "jenkins" {
-  name                 = "jenkins-ecs-${var.name}"
+resource "aws_alb_target_group" "target_group" {
+  name                 = "${var.prefix}-${var.name}"
   port                 = 8080
   protocol             = "HTTP"
   deregistration_delay = "10"
@@ -317,32 +310,32 @@ resource "aws_alb_target_group" "jenkins" {
     timeout             = 4
     matcher             = "200,403"
   }
-  depends_on = [aws_alb.jenkins]
+  depends_on = [aws_alb.alb]
 }
 
-resource "aws_alb" "jenkins" {
-  name            = "jenkins-ecs-${var.name}"
+resource "aws_alb" "alb" {
+  name            = "${var.prefix}-${var.name}"
   subnets         = var.load_balancer_subnets
-  security_groups = [aws_security_group.jenkins_alb.id]
+  security_groups = [aws_security_group.alb.id]
 }
 
 resource "aws_alb_listener" "front_end" {
-  load_balancer_arn = aws_alb.jenkins.id
+  load_balancer_arn = aws_alb.alb.id
   port              = "443"
   protocol          = "HTTPS"
   certificate_arn   = var.certificate_arn
   default_action {
-    target_group_arn = aws_alb_target_group.jenkins.id
+    target_group_arn = aws_alb_target_group.target_group.id
     type             = "forward"
   }
 }
 
 resource "aws_alb_listener" "http_to_https_redirect" {
-  load_balancer_arn = aws_alb.jenkins.id
+  load_balancer_arn = aws_alb.alb.id
   port              = "80"
   protocol          = "HTTP"
   default_action {
-    target_group_arn = aws_alb_target_group.jenkins.id
+    target_group_arn = aws_alb_target_group.target_group.id
     type             = "redirect"
     redirect {
       port        = "443"
@@ -356,10 +349,10 @@ data "aws_route53_zone" "zone" {
   name = var.hosted_zone
 }
 
-resource "aws_route53_record" "jenkins" {
+resource "aws_route53_record" "record" {
   zone_id = data.aws_route53_zone.zone.zone_id
   name    = var.url
   type    = "CNAME"
   ttl     = "5"
-  records = [aws_alb.jenkins.dns_name]
+  records = [aws_alb.alb.dns_name]
 }

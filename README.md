@@ -38,6 +38,7 @@ WIP
 | instance\_type | Jenkins master instance type | string | `"m5.xlarge"` | no |
 | load\_balancer\_subnets | The subnets the load balancer will include. | list | n/a | yes |
 | name | Name for the Jenkins installation.  This is used in prefixes and suffixes. | string | n/a | yes |
+| prefix | Prefix used in naming resources | string | `"jenkins"` | no |
 | url | The full url to the jenkins host | string | n/a | yes |
 | vpc\_id | VPC ID into which Jenkins is launched. | string | n/a | yes |
 
