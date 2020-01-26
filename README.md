@@ -39,7 +39,7 @@ See a common implementation (complete with VPC)  [here!](examples/common)
 
 ## Contributing / To-Do
 
-See current open [issues](https://gitlab.com/collabralink/delivery/cl-jenkins-terraform/issues)
+See current open [issues](https://gitlab.com/collabralink/delivery/cl-jenkins-terraform/issues) or check out the [board](https://gitlab.com/collabralink/delivery/cl-jenkins-terraform/-/boards)
 
 Please feel free to open new issues for defects or enhancements.
 
