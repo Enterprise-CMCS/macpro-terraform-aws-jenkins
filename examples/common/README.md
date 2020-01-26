@@ -21,3 +21,5 @@ $ terraform apply
 ```
 
 ## Notes
+
+Please reference the inputs/outputs documentation in the top level README for more information.
