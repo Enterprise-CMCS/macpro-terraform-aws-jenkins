@@ -13,7 +13,10 @@ dockergid=`echo $(getent group docker) | cut -d: -f3`
 chown 1000:$dockergid /var/run/docker.sock
 
 # Install rexray plugin to help with persistent EBS storage orchestration
-docker plugin install rexray/ebs REXRAY_PREEMPT=true EBS_REGION=${ebs_region} --grant-all-permissions
+until docker plugin install rexray/ebs REXRAY_PREEMPT=true EBS_REGION=${ebs_region} --grant-all-permissions
+do
+  echo "docker plugin install failed.  Retrying in 5s" && sleep 5
+done
 
 # Let the ECS agent know to which cluster this host belongs.
 echo ECS_CLUSTER='${ecs_cluster_name}' >> /etc/ecs/ecs.config
