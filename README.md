@@ -1,11 +1,11 @@
 # Jenkins ECS Terraform Module
 
-Terraform module which builds a containerized Jenkins Master implementation orchestrated by ECS.
+A containerized Jenkins Master implementation orchestrated by ECS.
 
 
 ## Terraform versions
 
-Terraform 0.12 is supported.
+Terraform 0.12 +
 
 
 ## Usage
@@ -48,6 +48,7 @@ WIP
 
 | Name | Description |
 |------|-------------|
+| ecs\_host\_role\_id | The IAM role ID attached to the ECS host instance.  This can be used to attach new policies to the ECS host. |
 | ecs\_task\_role\_id | The IAM role ID attached to the ECS task.  This can be used to attach new policies to the running task. |
 
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
