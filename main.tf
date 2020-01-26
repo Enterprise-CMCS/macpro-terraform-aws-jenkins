@@ -171,7 +171,7 @@ resource "aws_ecs_service" "ecs_service" {
   cluster                           = aws_ecs_cluster.cluster.id
   task_definition                   = aws_ecs_task_definition.ecs_task.arn
   desired_count                     = 1
-  health_check_grace_period_seconds = 600
+  health_check_grace_period_seconds = 300
 
   load_balancer {
     target_group_arn = aws_alb_target_group.target_group.id
