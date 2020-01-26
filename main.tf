@@ -79,7 +79,7 @@ resource "aws_iam_instance_profile" "ecs_host" {
 resource "aws_launch_configuration" "ecs_host" {
   name_prefix                 = "${var.prefix}-${var.name}"
   image_id                    = data.aws_ami.ecs_optimized.id
-  instance_type               = var.instance_type
+  instance_type               = var.host_instance_type
   security_groups             = flatten([aws_security_group.ecs_host.id, var.host_security_groups])
   key_name                    = var.host_key_name
   associate_public_ip_address = false
@@ -237,7 +237,7 @@ resource "aws_alb_listener" "front_end" {
   load_balancer_arn = aws_alb.alb.id
   port              = "443"
   protocol          = "HTTPS"
-  certificate_arn   = var.certificate_arn
+  certificate_arn   = var.fqdn_certificate_arn
   default_action {
     target_group_arn = aws_alb_target_group.target_group.id
     type             = "forward"
@@ -260,12 +260,12 @@ resource "aws_alb_listener" "http_to_https_redirect" {
 }
 
 data "aws_route53_zone" "zone" {
-  name = var.hosted_zone
+  name = var.fqdn_hosted_zone
 }
 
 resource "aws_route53_record" "record" {
   zone_id = data.aws_route53_zone.zone.zone_id
-  name    = var.url
+  name    = var.fqdn
   type    = "CNAME"
   ttl     = "5"
   records = [aws_alb.alb.dns_name]

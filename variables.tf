@@ -8,9 +8,25 @@ variable "auto_scaling_subnets" {
   type        = list
 }
 
-variable "certificate_arn" {
-  description = "The arn of the ACM certificate to be applied to the jenkins ALB.  This certificate should be applicable to the jenkins_url variable"
+variable "fqdn" {
+  description = "The FQDN with which jenkins is accessed."
   type        = string
+}
+
+variable "fqdn_certificate_arn" {
+  description = "The arn of the ACM certificate that gets applied to jenkins ALB.  This certificate should be valid for the supplied fqdn value."
+  type        = string
+}
+
+variable "fqdn_hosted_zone" {
+  description = "The hosted zone in which to create the route 53 record for jenkins.  The fqdn should fall inside this hosted zone."
+  type        = string
+}
+
+variable "host_instance_type" {
+  description = "Jenkins master instance type"
+  type        = string
+  default     = "m5.xlarge"
 }
 
 variable "host_key_name" {
@@ -23,21 +39,10 @@ variable "host_security_groups" {
   default     = []
 }
 
-variable "hosted_zone" {
-  description = "The hosted zone in which to create the route 53 record for jenkins"
-  type        = string
-}
-
 variable "image" {
   description = "Jenkins image to use"
   type        = string
   default     = "jenkins/jenkins:lts-centos"
-}
-
-variable "instance_type" {
-  description = "Jenkins master instance type"
-  type        = string
-  default     = "m5.xlarge"
 }
 
 variable "jenkins_home_size" {
@@ -66,11 +71,6 @@ variable "prefix" {
   description = "Prefix used in naming resources"
   type        = string
   default     = "jenkins"
-}
-
-variable "url" {
-  description = "The full url to the jenkins host"
-  type        = string
 }
 
 variable "vpc_id" {

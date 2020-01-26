@@ -47,12 +47,12 @@ module "jenkins" {
   source                         = "../.."
   name                           = local.example_name
   vpc_id                         = module.vpc.vpc_id
-  instance_type                  = "t3.small"
+  host_instance_type             = "t3.small"
   host_key_name                  = "examples"
   auto_scaling_subnets           = [module.vpc.private_subnets[0]]
   auto_scaling_availability_zone = data.aws_availability_zones.available.names[0]
   load_balancer_subnets          = module.vpc.public_subnets
-  url                            = "jenkins-${local.example_name}.examples.cl-demo.com"
-  hosted_zone                    = "cl-demo.com"
-  certificate_arn                = "arn:aws:acm:us-east-1:008087533974:certificate/d3303ea6-6bb5-4ae8-93cc-8bad2ddb1345"
+  fqdn                           = "jenkins-${local.example_name}.examples.cl-demo.com"
+  fqdn_hosted_zone               = "cl-demo.com"
+  fqdn_certificate_arn           = "arn:aws:acm:us-east-1:008087533974:certificate/d3303ea6-6bb5-4ae8-93cc-8bad2ddb1345"
 }
