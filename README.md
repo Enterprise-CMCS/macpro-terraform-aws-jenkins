@@ -18,7 +18,7 @@ See a common implementation (complete with VPC) [here!](examples/common)
 
 ```hcl
 module "jenkins" {
-  source                         = "git::ssh://git@gitlab.com/mdialcollabralinkcom/jenkins-ecs.git"
+  source                         = "git::ssh://git@gitlab.com/collabralink/deliver/terraform-aws-jenkins.git"
   name                           = "jenkins"
   vpc_id                         = "vpc-abc123"
   host_instance_type             = "t3.large"
@@ -39,7 +39,7 @@ See a common implementation (complete with VPC)  [here!](examples/common)
 
 ## Contributing / To-Do
 
-See current open [issues](https://gitlab.com/collabralink/delivery/cl-jenkins-terraform/issues) or check out the [board](https://gitlab.com/collabralink/delivery/cl-jenkins-terraform/-/boards)
+See current open [issues](https://gitlab.com/collabralink/delivery/terraform-aws-jenkins/issues) or check out the [board](https://gitlab.com/collabralink/delivery/terraform-aws-jenkins/-/boards)
 
 Please feel free to open new issues for defects or enhancements.
 
@@ -82,7 +82,7 @@ WIP
 
 ## Authors
 
-Currently maintained by [these contributors](https://gitlab.com/mdialcollabralinkcom/jenkins-eks/-/graphs/master) at Collabralink Technologies, Inc.
+Currently maintained by [these contributors](https://gitlab.com/collabralink/delivery/terraform-aws-jenkins/-/graphs/master) at Collabralink Technologies, Inc.
 Module managed by [Mike Dial](https://gitlab.com/mdialcollabralinkcom).
 
 ## License
