@@ -3,6 +3,8 @@ locals {
   ebs_volume_name = "${var.prefix}-persistent-data-${var.name}"
 }
 
+data "aws_region" "this" {}
+
 data "aws_vpc" "vpc" {
   id = var.vpc_id
 }
@@ -53,8 +55,6 @@ data "aws_ami" "ecs_optimized" {
     ]
   }
 }
-
-data "aws_region" "this" {}
 
 data "template_file" "user_data" {
   template = file("${path.module}/templates/user_data.tpl")
