@@ -30,7 +30,7 @@ variable "hosted_zone" {
 
 variable "image" {
   description = "Jenkins image to use"
-  type        = "string"
+  type        = string
   default     = "jenkins/jenkins:lts-centos"
 }
 
