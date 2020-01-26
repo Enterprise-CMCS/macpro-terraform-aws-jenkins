@@ -2,7 +2,7 @@
   {
     "name": "jenkins",
     "image": "${image}",
-    "memory": 8192,
+    "memoryReservation": 1024,
     "essential": true,
     "portMappings": [
       {
