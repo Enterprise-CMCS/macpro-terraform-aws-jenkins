@@ -66,79 +66,13 @@ data "template_file" "user_data" {
 
 resource "aws_iam_role" "ecs_host" {
   name               = "${var.prefix}-ecs-host-${var.name}"
-  assume_role_policy = <<EOF
-{
-  "Version": "2008-10-17",
-  "Statement": [
-    {
-      "Action": "sts:AssumeRole",
-      "Principal": {
-        "Service": [
-          "ec2.amazonaws.com"
-        ]
-      },
-      "Effect": "Allow"
-    }
-  ]
-}
-EOF
+  assume_role_policy = file("${path.module}/files/assume-role-policy-ec2.json")
 }
 
 resource "aws_iam_role_policy" "ecs_host" {
   name   = "${var.prefix}-ecs-host-${var.name}"
   role   = aws_iam_role.ecs_host.id
-  policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Action": [
-        "ec2:DescribeTags",
-        "ecs:CreateCluster",
-        "ecs:DeregisterContainerInstance",
-        "ecs:DiscoverPollEndpoint",
-        "ecs:Poll",
-        "ecs:RegisterContainerInstance",
-        "ecs:StartTelemetrySession",
-        "ecs:UpdateContainerInstancesState",
-        "ecs:Submit*",
-        "ecr:GetAuthorizationToken",
-        "ecr:BatchCheckLayerAvailability",
-        "ecr:GetDownloadUrlForLayer",
-        "ecr:BatchGetImage",
-        "logs:CreateLogStream",
-        "logs:PutLogEvents"
-      ],
-      "Resource": "*"
-    },
-    {
-      "Effect": "Allow",
-      "Action": [
-        "ec2:DetachVolume",
-        "ec2:AttachVolume",
-        "ec2:CopySnapshot",
-        "ec2:DeleteSnapshot",
-        "ec2:ModifyVolumeAttribute",
-        "ec2:DescribeInstances",
-        "ec2:DescribeTags",
-        "ec2:DescribeSnapshotAttribute",
-        "ec2:CreateTags",
-        "ec2:DescribeSnapshots",
-        "ec2:DescribeVolumeAttribute",
-        "ec2:CreateVolume",
-        "ec2:DeleteVolume",
-        "ec2:DescribeVolumeStatus",
-        "ec2:ModifySnapshotAttribute",
-        "ec2:DescribeAvailabilityZones",
-        "ec2:DescribeVolumes",
-        "ec2:CreateSnapshot"
-      ],
-      "Resource": "*"
-    }
-  ]
-}
-EOF
+  policy = file("${path.module}/files/ecs-host-policy.json")
 }
 
 resource "aws_iam_instance_profile" "ecs_host" {
@@ -191,32 +125,7 @@ resource "aws_autoscaling_group" "ecs_host" {
 
 resource "aws_iam_role" "ecs_task" {
   name               = "${var.prefix}-ecs-task-${var.name}"
-  assume_role_policy = <<EOF
-{
-  "Version": "2008-10-17",
-  "Statement": [
-    {
-      "Action": "sts:AssumeRole",
-      "Principal": {
-        "Service": [
-          "ecs-tasks.amazonaws.com"
-        ]
-      },
-      "Effect": "Allow"
-    }
-  ]
-}
-EOF
-}
-
-data "template_file" "ecs_task_policy" {
-  template = file("${path.module}/templates/ecs-task-policy.json.tpl")
-}
-
-resource "aws_iam_role_policy" "ecs_task" {
-  name   = "${var.prefix}-ecs-task-${var.name}"
-  policy = data.template_file.ecs_task_policy.rendered
-  role   = aws_iam_role.ecs_host.id
+  assume_role_policy = file("${path.module}/files/assume-role-policy-ecs-tasks.json")
 }
 
 data "template_file" "ecs_task" {
@@ -239,6 +148,7 @@ resource "aws_ebs_volume" "jenkins_home" {
 resource "aws_ecs_task_definition" "ecs_task" {
   family                = "${var.prefix}-${var.name}"
   container_definitions = data.template_file.ecs_task.rendered
+  task_role_arn         = aws_iam_role.ecs_task.arn
   network_mode          = "host"
   volume {
     name = local.ebs_volume_name
@@ -367,62 +277,15 @@ resource "aws_route53_record" "record" {
   records = [aws_alb.alb.dns_name]
 }
 
-
-
-
-
 resource "aws_iam_role" "dlm_lifecycle_role" {
   name               = "${var.prefix}-dlm-lifecycle-role-${var.name}"
-  assume_role_policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Action": "sts:AssumeRole",
-      "Principal": {
-        "Service": "dlm.amazonaws.com"
-      },
-      "Effect": "Allow",
-      "Sid": ""
-    }
-  ]
-}
-EOF
+  assume_role_policy = file("${path.module}/files/assume-role-policy-dlm.json")
 }
 
 resource "aws_iam_role_policy" "dlm_lifecycle" {
   name   = "${var.prefix}-dlm-lifecycle-policy-${var.name}"
   role   = aws_iam_role.dlm_lifecycle_role.id
-  policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Action": [
-        "ec2:CreateSnapshot",
-        "ec2:CreateSnapshots",
-        "ec2:DeleteSnapshot",
-        "ec2:DescribeInstances",
-        "ec2:DescribeVolumes",
-        "ec2:DescribeSnapshots",
-        "ec2:EnableFastSnapshotRestores",
-        "ec2:DescribeFastSnapshotRestores",
-        "ec2:DisableFastSnapshotRestores",
-        "ec2:CopySnapshot"
-      ],
-      "Resource": "*"
-    },
-    {
-      "Effect": "Allow",
-      "Action": [
-        "ec2:CreateTags"
-      ],
-      "Resource": "arn:aws:ec2:*::snapshot/*"
-    }
-  ]
-}
-EOF
+  policy = file("${path.module}/files/dlm-policy.json")
 }
 
 resource "aws_dlm_lifecycle_policy" "example" {

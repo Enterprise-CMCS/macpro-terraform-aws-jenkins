@@ -44,6 +44,12 @@ WIP
 | url | The full url to the jenkins host | string | n/a | yes |
 | vpc\_id | VPC ID into which Jenkins is launched. | string | n/a | yes |
 
+## Outputs
+
+| Name | Description |
+|------|-------------|
+| ecs\_task\_role\_id | The IAM role ID attached to the ECS task.  This can be used to attach new policies to the running task. |
+
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 
 

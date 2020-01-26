@@ -1,17 +1,6 @@
-
-variable "name" {
-  description = "Name for the Jenkins installation.  This is used in prefixes and suffixes."
+variable "auto_scaling_availability_zone" {
+  description = "The single AZ into which Jenkins should be launched. "
   type        = string
-}
-
-variable "vpc_id" {
-  description = "VPC ID into which Jenkins is launched."
-  type        = string
-}
-
-variable "load_balancer_subnets" {
-  description = "The subnets the load balancer will include."
-  type        = list
 }
 
 variable "auto_scaling_subnets" {
@@ -19,46 +8,42 @@ variable "auto_scaling_subnets" {
   type        = list
 }
 
+variable "certificate_arn" {
+  description = "The arn of the ACM certificate to be applied to the jenkins ALB.  This certificate should be applicable to the jenkins_url variable"
+  type        = string
+}
+
+variable "host_key_name" {
+  description = "SSH key name in your AWS account for AWS instances."
+  type        = string
+}
+
 variable "host_security_groups" {
   description = "Additional security groups to add to the jenkins host"
   default     = []
 }
 
-variable "host_key_name" {
-  description = "SSH key name in your AWS account for AWS instances."
-}
-
-variable "instance_type" {
-  description = "Jenkins master instance type"
-  default     = "m5.xlarge"
+variable "hosted_zone" {
+  description = "The hosted zone in which to create the route 53 record for jenkins"
+  type        = string
 }
 
 variable "image" {
   description = "Jenkins image to use"
+  type        = "string"
   default     = "jenkins/jenkins:lts-centos"
 }
 
-variable "certificate_arn" {
-  description = "The arn of the ACM certificate to be applied to the jenkins ALB.  This certificate should be applicable to the jenkins_url variable"
-}
-
-variable "hosted_zone" {
-  description = "The hosted zone in which to create the route 53 record for jenkins"
-}
-
-variable "url" {
-  description = "The full url to the jenkins host"
-}
-
-variable "prefix" {
-  description = "Prefix used in naming resources"
+variable "instance_type" {
+  description = "Jenkins master instance type"
   type        = string
-  default     = "jenkins"
+  default     = "m5.xlarge"
 }
 
-variable "auto_scaling_availability_zone" {
-  description = "The single AZ into which Jenkins should be launched. "
+variable "jenkins_home_size" {
+  description = "The size in GB for the jenkins_home volume.  If using with jenkins_home_snapshot_id, size must be greater than the snapshot size."
   type        = string
+  default     = "50"
 }
 
 variable "jenkins_home_snapshot_id" {
@@ -67,8 +52,28 @@ variable "jenkins_home_snapshot_id" {
   default     = ""
 }
 
-variable "jenkins_home_size" {
-  description = "The size in GB for the jenkins_home volume.  If using with jenkins_home_snapshot_id, size must be greater than the snapshot size."
+variable "load_balancer_subnets" {
+  description = "The subnets the load balancer will include."
+  type        = list
+}
+
+variable "name" {
+  description = "Name for the Jenkins installation.  This is used in prefixes and suffixes."
   type        = string
-  default     = "50"
+}
+
+variable "prefix" {
+  description = "Prefix used in naming resources"
+  type        = string
+  default     = "jenkins"
+}
+
+variable "url" {
+  description = "The full url to the jenkins host"
+  type        = string
+}
+
+variable "vpc_id" {
+  description = "VPC ID into which Jenkins is launched."
+  type        = string
 }
