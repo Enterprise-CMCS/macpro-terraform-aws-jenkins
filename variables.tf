@@ -60,3 +60,15 @@ variable "auto_scaling_availability_zone" {
   description = "The single AZ into which Jenkins should be launched. "
   type        = string
 }
+
+variable "jenkins_home_snapshot_id" {
+  description = "The snapshot ID from which to build the ebs volume."
+  type        = string
+  default     = ""
+}
+
+variable "jenkins_home_size" {
+  description = "The size in GB for the jenkins_home volume.  If using with jenkins_home_snapshot_id, size must be greater than the snapshot size."
+  type        = string
+  default     = "50"
+}

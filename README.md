@@ -37,6 +37,8 @@ WIP
 | hosted\_zone | The hosted zone in which to create the route 53 record for jenkins | string | n/a | yes |
 | image | Jenkins image to use | string | `"jenkins/jenkins:lts-centos"` | no |
 | instance\_type | Jenkins master instance type | string | `"m5.xlarge"` | no |
+| jenkins\_home\_size | The size in GB for the jenkins_home volume.  If using with jenkins_home_snapshot_id, size must be greater than the snapshot size. | string | `"50"` | no |
+| jenkins\_home\_snapshot\_id | The snapshot ID from which to build the ebs volume. | string | `""` | no |
 | load\_balancer\_subnets | The subnets the load balancer will include. | list | n/a | yes |
 | name | Name for the Jenkins installation.  This is used in prefixes and suffixes. | string | n/a | yes |
 | prefix | Prefix used in naming resources | string | `"jenkins"` | no |

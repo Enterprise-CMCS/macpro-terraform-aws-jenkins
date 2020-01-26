@@ -229,7 +229,8 @@ data "template_file" "ecs_task" {
 
 resource "aws_ebs_volume" "jenkins_home" {
   availability_zone = var.auto_scaling_availability_zone
-  size              = 40
+  size              = var.jenkins_home_size
+  snapshot_id       = var.jenkins_home_snapshot_id
   tags = {
     Name = local.ebs_volume_name
   }
@@ -394,26 +395,32 @@ resource "aws_iam_role_policy" "dlm_lifecycle" {
   role   = aws_iam_role.dlm_lifecycle_role.id
   policy = <<EOF
 {
-   "Version": "2012-10-17",
-   "Statement": [
-      {
-         "Effect": "Allow",
-         "Action": [
-            "ec2:CreateSnapshot",
-            "ec2:DeleteSnapshot",
-            "ec2:DescribeVolumes",
-            "ec2:DescribeSnapshots"
-         ],
-         "Resource": "*"
-      },
-      {
-         "Effect": "Allow",
-         "Action": [
-            "ec2:CreateTags"
-         ],
-         "Resource": "arn:aws:ec2:*::snapshot/*"
-      }
-   ]
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ec2:CreateSnapshot",
+        "ec2:CreateSnapshots",
+        "ec2:DeleteSnapshot",
+        "ec2:DescribeInstances",
+        "ec2:DescribeVolumes",
+        "ec2:DescribeSnapshots",
+        "ec2:EnableFastSnapshotRestores",
+        "ec2:DescribeFastSnapshotRestores",
+        "ec2:DisableFastSnapshotRestores",
+        "ec2:CopySnapshot"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ec2:CreateTags"
+      ],
+      "Resource": "arn:aws:ec2:*::snapshot/*"
+    }
+  ]
 }
 EOF
 }
@@ -427,16 +434,18 @@ resource "aws_dlm_lifecycle_policy" "example" {
     schedule {
       name = "2 weeks of daily snapshots"
       create_rule {
-        interval      = 2
+        interval      = 24
         interval_unit = "HOURS"
+        times         = ["00:31"]
       }
       retain_rule {
         count = 14
       }
       tags_to_add = {
         SnapshotCreator = "DLM"
+        SourceVolume    = local.ebs_volume_name
       }
-      copy_tags = false
+      copy_tags = true
     }
     target_tags = {
       Name = local.ebs_volume_name
