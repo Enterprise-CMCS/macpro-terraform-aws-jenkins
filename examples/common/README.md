@@ -2,9 +2,9 @@
 
 This is a working terraform example that builds a VPC and a Jenkins with fairly common configuration.
 Notably:
+- The image variable is not specified, leaving the module default (jenkins/jenkins:lts-centos) in force.
 - A custom instance type is specified for the ECS Host.  (t3.small is uncommonly small, but overriding the default value is common)
 - private subnets are passed to auto_scaling_subnets, indicating the Jenkins host should not be publicly accessible.
--
 
 ## Usage
 
