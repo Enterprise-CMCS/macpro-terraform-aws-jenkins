@@ -18,7 +18,7 @@ See a common implementation (complete with VPC) [here!](examples/common)
 
 ```hcl
 module "jenkins" {
-  source                         = "git::ssh://git@gitlab.com/collabralink/deliver/terraform-aws-jenkins.git"
+  source                         = "git::ssh://git@gitlab.com/collabralink/delivery/terraform-aws-jenkins.git"
   name                           = "jenkins"
   vpc_id                         = "vpc-abc123"
   host_instance_type             = "t3.large"
