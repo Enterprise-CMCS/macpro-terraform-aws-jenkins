@@ -9,19 +9,37 @@ Terraform 0.12 +
 
 
 ## Usage
-WIP
+See a common implementation (complete with VPC) [here!](examples/common)
+
+```hcl
+module "jenkins" {
+  source                         = "git::ssh://git@gitlab.com/mdialcollabralinkcom/jenkins-ecs.git"
+  name                           = "jenkins"
+  vpc_id                         = "vpc-abc123"
+  instance_type                  = "t3.large"
+  host_key_name                  = "myEC2KeyPair"
+  auto_scaling_subnets           = ["subnet-123afb39d0dagdv32",subnet-004aff23j60dwez897"]
+  auto_scaling_availability_zone = "us-east-1a"
+  load_balancer_subnets          = ["subnet-277afb45g0dagdv32",subnet-3288vvssdwezf221xv"]
+  url                            = "jenkins.mydomain.com"
+  hosted_zone                    = "mydomain.com"
+  certificate_arn                = "arn:aws:acm:us-east-1:02333354974:certificate/dsav3ea6-6ff5-31e8-93cc-8badfdvzf1345"
+}
+```
+
 
 ## Examples
-WIP
+See a common implementation (complete with VPC)  [here!](examples/common)
+
 
 ## Contributing / To-Do
-
 WIP
 
 
 ## Notes
 
 WIP
+
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Inputs
