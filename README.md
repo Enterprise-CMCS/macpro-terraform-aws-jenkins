@@ -1,7 +1,6 @@
-# Jenkins EKS
+# Jenkins ECS Terraform Module
 
-Terraform module which:
-- Creates a Jenkins Master orchestrated with EKS.
+Terraform module which builds a containerized Jenkins Master implementation orchestrated by ECS.
 
 
 ## Terraform versions
