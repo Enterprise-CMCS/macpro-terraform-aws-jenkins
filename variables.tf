@@ -55,3 +55,8 @@ variable "prefix" {
   type        = string
   default     = "jenkins"
 }
+
+variable "auto_scaling_availability_zone" {
+  description = "The single AZ into which Jenkins should be launched. "
+  type        = string
+}

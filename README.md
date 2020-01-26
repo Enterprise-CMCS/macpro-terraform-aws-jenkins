@@ -29,6 +29,7 @@ WIP
 
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
+| auto\_scaling\_availability\_zone | The single AZ into which Jenkins should be launched. | string | n/a | yes |
 | auto\_scaling\_subnets | The subnets for the Jenkins auto scaling group into which Jenkins may be placed. | list | n/a | yes |
 | certificate\_arn | The arn of the ACM certificate to be applied to the jenkins ALB.  This certificate should be applicable to the jenkins_url variable | string | n/a | yes |
 | host\_key\_name | SSH key name in your AWS account for AWS instances. | string | n/a | yes |

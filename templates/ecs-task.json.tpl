@@ -21,7 +21,7 @@
     "mountPoints": [
       {
         "containerPath": "/var/jenkins_home",
-        "sourceVolume": "jenkins_home",
+        "sourceVolume": "${ebs_volume_name}",
         "readOnly": null
       },
       {

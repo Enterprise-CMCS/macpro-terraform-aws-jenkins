@@ -1,4 +1,8 @@
 
+locals {
+  ebs_volume_name = "${var.prefix}-persistent-data-${var.name}"
+}
+
 data "aws_vpc" "vpc" {
   id = var.vpc_id
 }
@@ -218,7 +222,16 @@ resource "aws_iam_role_policy" "ecs_task" {
 data "template_file" "ecs_task" {
   template = file("${path.module}/templates/ecs-task.json.tpl")
   vars = {
-    image = var.image
+    image           = var.image
+    ebs_volume_name = local.ebs_volume_name
+  }
+}
+
+resource "aws_ebs_volume" "jenkins_home" {
+  availability_zone = var.auto_scaling_availability_zone
+  size              = 40
+  tags = {
+    Name = local.ebs_volume_name
   }
 }
 
@@ -227,15 +240,11 @@ resource "aws_ecs_task_definition" "ecs_task" {
   container_definitions = data.template_file.ecs_task.rendered
   network_mode          = "host"
   volume {
-    name = "jenkins_home"
+    name = local.ebs_volume_name
     docker_volume_configuration {
       scope         = "shared"
-      autoprovision = true
+      autoprovision = false
       driver        = "rexray/ebs"
-      driver_opts = {
-        volume_type = "gp2"
-        size        = "100"
-      }
     }
   }
   volume {
@@ -355,4 +364,82 @@ resource "aws_route53_record" "record" {
   type    = "CNAME"
   ttl     = "5"
   records = [aws_alb.alb.dns_name]
+}
+
+
+
+
+
+resource "aws_iam_role" "dlm_lifecycle_role" {
+  name               = "${var.prefix}-dlm-lifecycle-role-${var.name}"
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": "sts:AssumeRole",
+      "Principal": {
+        "Service": "dlm.amazonaws.com"
+      },
+      "Effect": "Allow",
+      "Sid": ""
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy" "dlm_lifecycle" {
+  name   = "${var.prefix}-dlm-lifecycle-policy-${var.name}"
+  role   = aws_iam_role.dlm_lifecycle_role.id
+  policy = <<EOF
+{
+   "Version": "2012-10-17",
+   "Statement": [
+      {
+         "Effect": "Allow",
+         "Action": [
+            "ec2:CreateSnapshot",
+            "ec2:DeleteSnapshot",
+            "ec2:DescribeVolumes",
+            "ec2:DescribeSnapshots"
+         ],
+         "Resource": "*"
+      },
+      {
+         "Effect": "Allow",
+         "Action": [
+            "ec2:CreateTags"
+         ],
+         "Resource": "arn:aws:ec2:*::snapshot/*"
+      }
+   ]
+}
+EOF
+}
+
+resource "aws_dlm_lifecycle_policy" "example" {
+  description        = "example DLM lifecycle policy"
+  execution_role_arn = aws_iam_role.dlm_lifecycle_role.arn
+  state              = "ENABLED"
+  policy_details {
+    resource_types = ["VOLUME"]
+    schedule {
+      name = "2 weeks of daily snapshots"
+      create_rule {
+        interval      = 2
+        interval_unit = "HOURS"
+      }
+      retain_rule {
+        count = 14
+      }
+      tags_to_add = {
+        SnapshotCreator = "DLM"
+      }
+      copy_tags = false
+    }
+    target_tags = {
+      Name = local.ebs_volume_name
+    }
+  }
 }
