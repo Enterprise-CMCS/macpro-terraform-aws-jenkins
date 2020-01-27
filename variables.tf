@@ -35,7 +35,7 @@ variable "host_key_name" {
 }
 
 variable "host_security_groups" {
-  description = "Additional security groups to add to the jenkins host"
+  description = "Additional security groups to add to the jenkins host.  Warning:  These will only take affect when the next EC2 instance is launched by autoscaling.  You may want to use the ecs_host_security_group_id output to attach a new rule externally."
   default     = []
 }
 
