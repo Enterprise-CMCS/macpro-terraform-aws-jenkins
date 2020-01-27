@@ -61,10 +61,10 @@ module "jenkins" {
 # Open port 22 on the Jenkins ECS Host, maybe for development or debugging.
 ############################################################################
 resource "aws_security_group_rule" "dev_public_ssh" {
-  type            = "ingress"
-  from_port       = 22
-  to_port         = 22
-  protocol        = "tcp"
-  cidr_blocks = ["0.0.0.0/0"]
+  type              = "ingress"
+  from_port         = 22
+  to_port           = 22
+  protocol          = "tcp"
+  cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = module.jenkins.ecs_host_security_group_id
 }
