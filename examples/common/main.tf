@@ -56,3 +56,15 @@ module "jenkins" {
   fqdn_hosted_zone               = "cl-demo.com"
   fqdn_certificate_arn           = "arn:aws:acm:us-east-1:008087533974:certificate/d3303ea6-6bb5-4ae8-93cc-8bad2ddb1345"
 }
+
+############################################################################
+# Open port 22 on the Jenkins ECS Host, maybe for development or debugging.
+############################################################################
+resource "aws_security_group_rule" "dev_public_ssh" {
+  type            = "ingress"
+  from_port       = 22
+  to_port         = 22
+  protocol        = "tcp"
+  cidr_blocks = ["0.0.0.0/0"]
+  security_group_id = module.jenkins.ecs_host_security_group_id
+}
