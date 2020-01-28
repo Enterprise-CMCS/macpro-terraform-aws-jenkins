@@ -287,7 +287,7 @@ resource "aws_iam_role_policy" "dlm_lifecycle" {
 }
 
 resource "aws_dlm_lifecycle_policy" "example" {
-  description        = "example DLM lifecycle policy"
+  description        = "Jenkins DLM Lifecycle Policy ${var.name}"
   execution_role_arn = aws_iam_role.dlm_lifecycle_role.arn
   state              = "ENABLED"
   policy_details {
@@ -295,12 +295,12 @@ resource "aws_dlm_lifecycle_policy" "example" {
     schedule {
       name = "2 weeks of daily snapshots"
       create_rule {
-        interval      = 24
+        interval      = 2
         interval_unit = "HOURS"
-        times         = ["00:31"]
+        times         = ["00:00"]
       }
       retain_rule {
-        count = 14
+        count = 168
       }
       tags_to_add = {
         SnapshotCreator = "DLM"
