@@ -74,6 +74,7 @@ WIP
 
 | Name | Description |
 |------|-------------|
+| ecs\_cluster\_id | The ID of the ECS cluster. |
 | ecs\_host\_role\_id | The IAM role ID attached to the ECS host instance.  This can be used to attach new policies to the ECS host. |
 | ecs\_host\_security\_group\_id | The ID of the security group used by the Jenkins auto scaling launch config. |
 | ecs\_task\_role\_id | The IAM role ID attached to the ECS task.  This can be used to attach new policies to the running task. |

@@ -13,3 +13,8 @@ output "ecs_host_security_group_id" {
   description = "The ID of the security group used by the Jenkins auto scaling launch config."
   value       = aws_security_group.ecs_host.id
 }
+
+output "ecs_cluster_id" {
+  description = "The ID of the ECS cluster."
+  value       = aws_ecs_cluster.cluster.id
+}

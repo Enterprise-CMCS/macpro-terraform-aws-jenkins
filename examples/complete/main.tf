@@ -55,7 +55,7 @@ module "jenkins" {
   fqdn                           = "jenkins-${local.example_name}.examples.cl-demo.com"
   fqdn_hosted_zone               = "cl-demo.com"
   fqdn_certificate_arn           = "arn:aws:acm:us-east-1:008087533974:certificate/d3303ea6-6bb5-4ae8-93cc-8bad2ddb1345"
-  jenkins_home_size = "200"
+  jenkins_home_size              = "200"
 }
 
 ###################################################################################
@@ -68,43 +68,34 @@ data "aws_caller_identity" "current" {}
 data "template_file" "slave_ecs_cluster_policy_for_master" {
   template = file("./templates/slave-ecs-cluster-policy-for-master.json.tpl")
   vars = {
-    region = data.aws_region.current.name
-    account_id = data.aws_caller_identity.current.account_id
-    cluster_name = aws_ecs_cluster.slave_cluster.id
+    region       = data.aws_region.current.name
+    account_id   = data.aws_caller_identity.current.account_id
+    cluster_name = module.jenkins.ecs_cluster_id
   }
 }
 
 resource "aws_iam_role_policy" "slave_ecs_cluster_policy_for_master" {
   name   = "jenkins-slave-ecs-cluster-policy-for-master-${local.example_name}"
-  role       = module.jenkins.ecs_task_role_id
+  role   = module.jenkins.ecs_task_role_id
   policy = data.template_file.slave_ecs_cluster_policy_for_master.rendered
 }
 
 resource "aws_security_group_rule" "jenkins_slave_8080" {
-  type            = "ingress"
-  from_port       = 8080
-  to_port         = 8080
-  protocol        = "tcp"
+  type                     = "ingress"
+  from_port                = 8080
+  to_port                  = 8080
+  protocol                 = "tcp"
   source_security_group_id = aws_security_group.jenkins_slave.id
-  security_group_id = module.jenkins.ecs_host_security_group_id
+  security_group_id        = module.jenkins.ecs_host_security_group_id
 }
 
 resource "aws_security_group_rule" "jenkins_slave_50000" {
-  type            = "ingress"
-  from_port       = 50000
-  to_port         = 50000
-  protocol        = "tcp"
+  type                     = "ingress"
+  from_port                = 50000
+  to_port                  = 50000
+  protocol                 = "tcp"
   source_security_group_id = aws_security_group.jenkins_slave.id
-  security_group_id = module.jenkins.ecs_host_security_group_id
-}
-
-resource "aws_ecs_cluster" "slave_cluster" {
-  name = "jenkins-slave-cluster-${local.example_name}"
-  capacity_providers = ["FARGATE"]
-  default_capacity_provider_strategy {
-    capacity_provider = "FARGATE"
-    weight = "100"
-  }
+  security_group_id        = module.jenkins.ecs_host_security_group_id
 }
 
 resource "aws_security_group" "jenkins_slave" {
@@ -140,8 +131,8 @@ EOF
 }
 
 resource "aws_ecs_task_definition" "jenkins_fargate_jnlp_slave" {
-  family                = "jenkins-fargate-jnlp-slave-${local.example_name}"
-  container_definitions = <<EOF
+  family                   = "jenkins-fargate-jnlp-slave-${local.example_name}"
+  container_definitions    = <<EOF
 [
   {
     "name": "jenkins_slave_terraform_resource",
@@ -151,26 +142,26 @@ resource "aws_ecs_task_definition" "jenkins_fargate_jnlp_slave" {
   }
 ]
 EOF
-  task_role_arn         = aws_iam_role.ecs_task.arn
+  task_role_arn            = aws_iam_role.ecs_task.arn
   requires_compatibilities = ["FARGATE"]
-  memory = "1024"
-  cpu = 512
-  network_mode = "awsvpc"
+  memory                   = "1024"
+  cpu                      = 512
+  network_mode             = "awsvpc"
 }
 
 data "template_file" "slave_ecs_task_definition_policy_for_master" {
   template = file("./templates/slave-ecs-task-definition-policy-for-master.json.tpl")
   vars = {
-    region = data.aws_region.current.name
-    account_id = data.aws_caller_identity.current.account_id
-    cluster_name = aws_ecs_cluster.slave_cluster.id
+    region               = data.aws_region.current.name
+    account_id           = data.aws_caller_identity.current.account_id
+    cluster_name         = module.jenkins.ecs_cluster_id
     task_definition_name = aws_ecs_task_definition.jenkins_fargate_jnlp_slave.family
-    pass_role_role = module.jenkins.ecs_task_role_id
+    pass_role_role       = module.jenkins.ecs_task_role_id
   }
 }
 
 resource "aws_iam_role_policy" "slave_ecs_task_definition_policy_for_master" {
   name   = "jenkins-slave-ecs-task-definition-policy-for-master-${local.example_name}"
   policy = data.template_file.slave_ecs_task_definition_policy_for_master.rendered
-  role = module.jenkins.ecs_task_role_id
+  role   = module.jenkins.ecs_task_role_id
 }
