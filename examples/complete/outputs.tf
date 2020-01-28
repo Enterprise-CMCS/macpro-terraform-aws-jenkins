@@ -11,5 +11,5 @@ output "jenkins_slave_subnets" {
 
 output "jenkins_slave_task_definition" {
   description = "The Fargate JNLP slave task definition family, or name.  This can be used with the Jenkins ECS Plugin to launch Fargate slaves."
-  value = aws_ecs_task_definition.jenkins_fargate_jnlp_slave.family
+  value       = aws_ecs_task_definition.jenkins_fargate_jnlp_slave.family
 }
