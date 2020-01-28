@@ -1,3 +1,8 @@
+## [v1.1.3]
+
+- Close #7  Set DLM snapshot time to a non ridiculous value
+
+
 ## [v1.1.2]
 
 - Close #9  Expose the ecs cluster id as module output, allowing it to be used in external policies and security groups... i.e. you can reuse the master's cluster for slaves
