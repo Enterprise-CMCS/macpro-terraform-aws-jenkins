@@ -70,7 +70,7 @@ data "template_file" "slave_ecs_cluster_policy_for_master" {
   vars = {
     region = data.aws_region.current.name
     account_id = data.aws_caller_identity.current.account_id
-    cluster_name = aws_ecs_cluster.slave_cluster.id
+    cluster_name = module.jenkins.ecs_cluster_id
   }
 }
 
@@ -96,15 +96,6 @@ resource "aws_security_group_rule" "jenkins_slave_50000" {
   protocol        = "tcp"
   source_security_group_id = aws_security_group.jenkins_slave.id
   security_group_id = module.jenkins.ecs_host_security_group_id
-}
-
-resource "aws_ecs_cluster" "slave_cluster" {
-  name = "jenkins-slave-cluster-${local.example_name}"
-  capacity_providers = ["FARGATE"]
-  default_capacity_provider_strategy {
-    capacity_provider = "FARGATE"
-    weight = "100"
-  }
 }
 
 resource "aws_security_group" "jenkins_slave" {
@@ -163,7 +154,7 @@ data "template_file" "slave_ecs_task_definition_policy_for_master" {
   vars = {
     region = data.aws_region.current.name
     account_id = data.aws_caller_identity.current.account_id
-    cluster_name = aws_ecs_cluster.slave_cluster.id
+    cluster_name = module.jenkins.ecs_cluster_id
     task_definition_name = aws_ecs_task_definition.jenkins_fargate_jnlp_slave.family
     pass_role_role = module.jenkins.ecs_task_role_id
   }
