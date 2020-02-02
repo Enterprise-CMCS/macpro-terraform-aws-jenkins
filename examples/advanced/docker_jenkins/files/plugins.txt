@@ -20,3 +20,4 @@ google-login
 gitlab-plugin
 ansicolor
 amazon-ecs
+pipeline-stage-view
