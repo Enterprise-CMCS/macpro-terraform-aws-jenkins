@@ -6,16 +6,7 @@
     "essential": true,
     "portMappings": [
       {
-        "containerPort": 8080,
-        "hostPort": 8080
-      },
-      {
-        "containerPort": 50000,
-        "hostPort": 50000
-      },
-      {
-	"containerPort": 8980,
-	"hostPort": 8980
+        "containerPort": 8080
       }
     ],
     "mountPoints": [

@@ -11,26 +11,41 @@ data "aws_vpc" "vpc" {
 
 resource "aws_security_group" "ecs_host" {
   name        = "${var.prefix}-ecs-host-${var.name}"
-  description = "Allows 8080 traffic"
+  description = "Jenkins ECS Host security group"
   vpc_id      = var.vpc_id
 }
 
-resource "aws_security_group_rule" "ecs_host_8080" {
-  type                     = "ingress"
-  from_port                = 8080
-  to_port                  = 8080
-  protocol                 = "tcp"
-  source_security_group_id = aws_security_group.alb.id
-  security_group_id        = aws_security_group.ecs_host.id
-}
-
-resource "aws_security_group_rule" "jenkins_slave_ports" {
+resource "aws_security_group_rule" "ecs_host_egress" {
   type              = "egress"
   from_port         = 0
   to_port           = 0
   protocol          = "-1"
   cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.ecs_host.id
+}
+
+resource "aws_security_group" "ecs_task" {
+  name        = "${var.prefix}-ecs-task-${var.name}"
+  description = "Jenkins ECS Task security group"
+  vpc_id      = var.vpc_id
+}
+
+resource "aws_security_group_rule" "ecs_task_egress" {
+  type              = "egress"
+  from_port         = 0
+  to_port           = 0
+  protocol          = "-1"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.ecs_task.id
+}
+
+resource "aws_security_group_rule" "ecs_task_ingress_8080" {
+  type                     = "ingress"
+  from_port                = 8080
+  to_port                  = 8080
+  protocol                 = "tcp"
+  source_security_group_id = aws_security_group.alb.id
+  security_group_id        = aws_security_group.ecs_task.id
 }
 
 resource "aws_ecs_cluster" "cluster" {
@@ -147,7 +162,7 @@ resource "aws_ecs_task_definition" "ecs_task" {
   family                = "${var.prefix}-${var.name}"
   container_definitions = data.template_file.ecs_task.rendered
   task_role_arn         = aws_iam_role.ecs_task.arn
-  network_mode          = "host"
+  network_mode          = "awsvpc"
   volume {
     name = local.ebs_volume_name
     docker_volume_configuration {
@@ -170,6 +185,24 @@ resource "aws_ecs_task_definition" "ecs_task" {
   }
 }
 
+resource "aws_service_discovery_private_dns_namespace" "jenkins" {
+  name        = "jenkins-${var.name}.local"
+  description = "${var.prefix}-private-dns-${var.name}"
+  vpc         = var.vpc_id
+}
+
+resource "aws_service_discovery_service" "jenkins" {
+  name = "jenkins"
+  dns_config {
+    namespace_id = aws_service_discovery_private_dns_namespace.jenkins.id
+    dns_records {
+      ttl  = 5
+      type = "A"
+    }
+    routing_policy = "WEIGHTED"
+  }
+}
+
 resource "aws_ecs_service" "ecs_service" {
   name                              = "${var.prefix}-${var.name}"
   cluster                           = aws_ecs_cluster.cluster.id
@@ -177,10 +210,21 @@ resource "aws_ecs_service" "ecs_service" {
   desired_count                     = 1
   health_check_grace_period_seconds = 300
 
+  network_configuration {
+    subnets          = var.auto_scaling_subnets
+    security_groups  = [aws_security_group.ecs_task.id]
+    assign_public_ip = false
+  }
+
   load_balancer {
     target_group_arn = aws_alb_target_group.target_group.id
     container_name   = "jenkins"
     container_port   = "8080"
+  }
+
+  service_registries {
+    registry_arn   = aws_service_discovery_service.jenkins.arn
+    container_name = "jenkins"
   }
 
   depends_on = [aws_autoscaling_group.ecs_host]
@@ -215,6 +259,7 @@ resource "aws_security_group" "alb" {
 resource "aws_alb_target_group" "target_group" {
   name                 = "${var.prefix}-${var.name}"
   port                 = 8080
+  target_type          = "ip"
   protocol             = "HTTP"
   deregistration_delay = "10"
   vpc_id               = var.vpc_id
