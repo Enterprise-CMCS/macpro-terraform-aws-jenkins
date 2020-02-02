@@ -1,3 +1,11 @@
+## [v2.0.0]
+
+- Close #5 and #8   
+- jenkins master task networking is now 'awspvc' mode.  This can be a breaking change for some, depending on the use of Jenkins Master.
+- the jenkins master task if now privately reachable with service discovery and a private namespace.
+- examples/advanced shows BYOI, JCasc, plugins.txt, ECS Slave cluster.
+
+
 ## [v1.1.3]
 
 - Close #7  Set DLM snapshot time to a non ridiculous value
