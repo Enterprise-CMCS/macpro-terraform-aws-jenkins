@@ -76,8 +76,10 @@ WIP
 |------|-------------|
 | ecs\_cluster\_id | The ID of the ECS cluster. |
 | ecs\_host\_role\_id | The IAM role ID attached to the ECS host instance.  This can be used to attach new policies to the ECS host. |
-| ecs\_host\_security\_group\_id | The ID of the security group used by the Jenkins auto scaling launch config. |
+| ecs\_host\_security\_group\_id | The ID of the security group used by the Jenkins master launch config.  Note:  With awsvpc networking, the host network configuration does not control the task network configuration; to do that, see ecs_task_security_group_id. |
+| ecs\_task\_private\_endpoint | The privately accessible FQDN for the task.  This can be used by Jenkins slaves to reach the master privately. |
 | ecs\_task\_role\_id | The IAM role ID attached to the ECS task.  This can be used to attach new policies to the running task. |
+| ecs\_task\_security\_group\_id | The ID of the security group attached to the Jenkins task. |
 
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 
