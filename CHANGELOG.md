@@ -1,3 +1,8 @@
+# [v2.0.2]
+
+- Set examples' source urls to what an external caller would use
+
+
 # [v2.0.1]
 
 - Close #11   Expose the Jenkins URL as module output; usage added to the advanced example.
