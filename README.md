@@ -80,6 +80,7 @@ WIP
 | ecs\_task\_private\_endpoint | The privately accessible FQDN for the task.  This can be used by Jenkins slaves to reach the master privately. |
 | ecs\_task\_role\_id | The IAM role ID attached to the ECS task.  This can be used to attach new policies to the running task. |
 | ecs\_task\_security\_group\_id | The ID of the security group attached to the Jenkins task. |
+| jenkins\_url | Jenkins' URL.  Put this in a browser. |
 
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 
