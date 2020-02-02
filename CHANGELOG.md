@@ -1,3 +1,8 @@
+# [v2.0.1]
+
+- Close #11   Expose the Jenkins URL as module output; usage added to the advanced example.
+
+
 ## [v2.0.0]
 
 - Close #5 and #8   
