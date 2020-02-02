@@ -28,3 +28,8 @@ output "ecs_task_private_endpoint" {
   description = "The privately accessible FQDN for the task.  This can be used by Jenkins slaves to reach the master privately."
   value       = "jenkins.${aws_service_discovery_private_dns_namespace.jenkins.name}"
 }
+
+output "jenkins_url" {
+  description = "Jenkins' URL.  Put this in a browser."
+  value       = "https://${aws_route53_record.record.fqdn}/"
+}

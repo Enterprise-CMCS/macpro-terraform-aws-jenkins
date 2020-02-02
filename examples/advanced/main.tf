@@ -42,7 +42,7 @@ module "jenkins" {
   source                         = "../.."
   name                           = var.name
   vpc_id                         = module.vpc.vpc_id
-  host_instance_type             = "t3.medium"
+  host_instance_type             = "m5.xlarge"
   host_key_name                  = "examples"
   auto_scaling_subnets           = [module.vpc.private_subnets[0]]
   auto_scaling_availability_zone = data.aws_availability_zones.available.names[0]
@@ -156,7 +156,7 @@ resource "aws_iam_instance_profile" "ecs_host" {
 resource "aws_launch_configuration" "ecs_host" {
   name_prefix                 = "jenkins-slave-ecs-host-${var.name}"
   image_id                    = data.aws_ami.ecs_optimized.id
-  instance_type               = "t3.medium"
+  instance_type               = "m5.xlarge"
   security_groups             = flatten([aws_security_group.jenkins_slave.id])
   key_name                    = "examples"
   associate_public_ip_address = false
