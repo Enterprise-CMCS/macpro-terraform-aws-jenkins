@@ -1,3 +1,8 @@
+# [v2.0.3]
+
+- Close #14   Add pipeline stage view plugin to advanced example
+
+
 # [v2.0.2]
 
 - Set examples' source urls to what an external caller would use
