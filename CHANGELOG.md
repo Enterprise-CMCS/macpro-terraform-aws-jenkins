@@ -1,3 +1,8 @@
+# [v2.0.4]
+
+- Close #15  Add Fargate slave task to the advanced example.
+
+
 # [v2.0.3]
 
 - Close #14   Add pipeline stage view plugin to advanced example
