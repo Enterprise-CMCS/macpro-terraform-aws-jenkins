@@ -23,5 +23,4 @@ chmod +x /usr/local/bin/docker-compose
 # Let the ECS agent know to which cluster this host belongs.
 echo ECS_CLUSTER='${ecs_cluster_name}' >> /etc/ecs/ecs.config
 docker pull jenkins/jnlp-slave
-docker pull selenium/standalone-firefox
 echo END

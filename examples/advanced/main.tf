@@ -39,10 +39,10 @@ module "vpc" {
 #########################################
 
 module "jenkins" {
-  source                         = "git::ssh://git@gitlab.com/collabralink/delivery/terraform-aws-jenkins.git"
+  source                         = "../.."
   name                           = var.name
   vpc_id                         = module.vpc.vpc_id
-  host_instance_type             = "m5.xlarge"
+  host_instance_type             = "t3a.small"
   host_key_name                  = "examples"
   auto_scaling_subnets           = [module.vpc.private_subnets[0]]
   auto_scaling_availability_zone = data.aws_availability_zones.available.names[0]
@@ -156,7 +156,7 @@ resource "aws_iam_instance_profile" "ecs_host" {
 resource "aws_launch_configuration" "ecs_host" {
   name_prefix                 = "jenkins-slave-ecs-host-${var.name}"
   image_id                    = data.aws_ami.ecs_optimized.id
-  instance_type               = "m5.xlarge"
+  instance_type               = "t3a.small"
   security_groups             = flatten([aws_security_group.jenkins_slave.id])
   key_name                    = "examples"
   associate_public_ip_address = false
@@ -177,7 +177,7 @@ resource "aws_launch_configuration" "ecs_host" {
 # re: EC2 tasks.  Auto Scaling group for EC2 instances hosting ECS tasks of type EC2.
 resource "aws_autoscaling_group" "ecs_host" {
   name                      = "jenkins-slave-ecs-host-${var.name}"
-  min_size                  = 1
+  min_size                  = 0
   max_size                  = 2
   desired_capacity          = 1
   health_check_type         = "EC2"
@@ -186,6 +186,7 @@ resource "aws_autoscaling_group" "ecs_host" {
   vpc_zone_identifier       = module.vpc.private_subnets
   lifecycle {
     create_before_destroy = true
+    ignore_changes        = ["desired_capacity"]
   }
   tags = [
     {
@@ -228,12 +229,34 @@ resource "aws_ecs_task_definition" "ec2_jnlp_slave" {
 }
 
 # ECS EC2 JNLP Slave - Allow Jenkins Master permission to launch task(s)
-resource "aws_iam_role_policy" "slave_ecs_task_definition_policy_for_master" {
+resource "aws_iam_role_policy" "slave_ec2_ecs_task_definition_policy_for_master" {
   name = "ec2-jnlp-slave-launch-permission-${var.name}"
   policy = templatefile("${path.module}/templates/slave-ecs-task-definition-policy-for-master.json.tpl", {
     region               = data.aws_region.current.name
     account_id           = data.aws_caller_identity.current.account_id
     task_definition_name = aws_ecs_task_definition.ec2_jnlp_slave.family
+  })
+  role = module.jenkins.ecs_task_role_id
+}
+
+# ECS EC2 JNLP Slave - Create task definition
+resource "aws_ecs_task_definition" "fargate_jnlp_slave" {
+  family                   = "fargate-jnlp-slave-${var.name}"
+  container_definitions    = file("${path.module}/files/task-def-jenkins-jnlp-slave-fargate.txt")
+  task_role_arn            = aws_iam_role.ecs_task.arn
+  requires_compatibilities = ["FARGATE"]
+  network_mode             = "awsvpc"
+  cpu                      = 512
+  memory                   = 1024
+}
+
+# ECS Fargate JNLP Slave - Allow Jenkins Master permission to launch task(s)
+resource "aws_iam_role_policy" "slave_fargate_ecs_task_definition_policy_for_master" {
+  name = "fargate-jnlp-slave-launch-permission-${var.name}"
+  policy = templatefile("${path.module}/templates/slave-ecs-task-definition-policy-for-master.json.tpl", {
+    region               = data.aws_region.current.name
+    account_id           = data.aws_caller_identity.current.account_id
+    task_definition_name = aws_ecs_task_definition.fargate_jnlp_slave.family
   })
   role = module.jenkins.ecs_task_role_id
 }

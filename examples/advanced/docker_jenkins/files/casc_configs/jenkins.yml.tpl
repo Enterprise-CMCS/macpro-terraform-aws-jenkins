@@ -35,6 +35,22 @@ jenkins:
             subnets: "${join(",", task_subnets)}"
             taskDefinitionOverride: "${ec2_jnlp_slave["family"]}"
             uniqueRemoteFSRoot: false
+          - label: "${fargate_jnlp_slave["label"]}"
+            assignPublicIp: false
+            cpu: 1
+            templateName: "na"
+            image: "na"
+            launchType: "${fargate_jnlp_slave["launch_type"]}"
+            memory: 0
+            memoryReservation: 0
+            networkMode: "default"
+            privileged: false
+            remoteFSRoot: "/home/jenkins"
+            securityGroups: "${task_security_group}"
+            sharedMemorySize: 0
+            subnets: "${join(",", task_subnets)}"
+            taskDefinitionOverride: "${fargate_jnlp_slave["family"]}"
+            uniqueRemoteFSRoot: false
 tool:
   git:
     installations:
