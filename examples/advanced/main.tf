@@ -39,7 +39,7 @@ module "vpc" {
 #########################################
 
 module "jenkins" {
-  source                         = "../.."
+  source                         = "git::ssh://git@gitlab.com/collabralink/delivery/terraform-aws-jenkins.git"
   name                           = var.name
   vpc_id                         = module.vpc.vpc_id
   host_instance_type             = "t3a.small"
