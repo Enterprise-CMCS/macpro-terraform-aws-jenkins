@@ -42,8 +42,8 @@ module "jenkins" {
   source                         = "git::ssh://git@gitlab.com/collabralink/delivery/terraform-aws-jenkins.git"
   name                           = var.name
   vpc_id                         = module.vpc.vpc_id
-  host_instance_type             = "t3a.small"
-  host_key_name                  = "examples"
+  host_instance_type             = var.host_instance_type
+  host_key_name                  = var.host_key_name
   auto_scaling_subnets           = [module.vpc.private_subnets[0]]
   auto_scaling_availability_zone = data.aws_availability_zones.available.names[0]
   load_balancer_subnets          = module.vpc.public_subnets
