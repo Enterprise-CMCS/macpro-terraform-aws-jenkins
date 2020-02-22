@@ -1,3 +1,8 @@
+# [v2.0.5]
+
+- Close #17  Make the advanced example easier to understand... refactor variables and add a README.
+
+
 # [v2.0.4]
 
 - Close #15  Add Fargate slave task to the advanced example.
