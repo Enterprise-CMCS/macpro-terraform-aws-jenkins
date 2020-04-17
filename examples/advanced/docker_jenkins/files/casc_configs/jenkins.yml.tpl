@@ -1,16 +1,6 @@
 jenkins:
   mode: NORMAL
   crumbIssuer: standard
-  authorizationStrategy:
-    globalMatrix:
-      permissions:
-        - "Overall/Read:anonymous"
-        - "Overall/Administer:authenticated"
-  securityRealm:
-    googleOAuth2:
-      clientId: "${jenkins_google_oauth_client_id}"
-      clientSecret: "${jenkins_google_oauth_client_secret}"
-      domain: "${jenkins_google_oauth_domain}"
   clouds:
     - ecs:
         cluster: "${slave_cluster_arn}"
@@ -40,7 +30,7 @@ jenkins:
             cpu: 1
             templateName: "na"
             image: "na"
-            launchType: "${fargate_jnlp_slave["launch_type"]}"
+          launchType: "${fargate_jnlp_slave["launch_type"]}"
             memory: 0
             memoryReservation: 0
             networkMode: "default"
@@ -77,4 +67,4 @@ unclassified:
     createAccountBasedOnEmail: true
   location:
     adminAddress: admin@example.com
-    url: ${jenkins_url}
+    url:  http://${module.jenkins.ecs_task_private_endpoint}:8080  ##  ${jenkins_alternative_url}   #${jenkins_url}

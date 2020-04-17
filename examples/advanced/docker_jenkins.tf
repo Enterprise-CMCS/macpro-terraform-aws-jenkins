@@ -13,7 +13,7 @@ module "path_hash" {
 resource "local_file" "jenkins_yml" {
   content = templatefile(
     "${path.module}/docker_jenkins/files/casc_configs/jenkins.yml.tpl", {
-      jenkins_url         = "https://${var.jenkins_fqdn}/",
+      jenkins_url         = "http://${module.jenkins.ecs_task_private_endpoint}:8080",
       slave_cluster_arn   = aws_ecs_cluster.slave_cluster.arn,
       region              = data.aws_region.current.name,
       task_subnets        = module.vpc.private_subnets,
@@ -29,9 +29,9 @@ resource "local_file" "jenkins_yml" {
         launch_type = join(",", aws_ecs_task_definition.fargate_jnlp_slave.requires_compatibilities)
       }
       jenkins_alternative_url            = "http://${module.jenkins.ecs_task_private_endpoint}:8080"
-      jenkins_google_oauth_client_id     = var.jenkins_google_oauth_client_id
-      jenkins_google_oauth_client_secret = var.jenkins_google_oauth_client_secret
-      jenkins_google_oauth_domain        = var.jenkins_google_oauth_domain
+  #    jenkins_google_oauth_client_id     = var.jenkins_google_oauth_client_id
+  #    jenkins_google_oauth_client_secret = var.jenkins_google_oauth_client_secret
+  #    jenkins_google_oauth_domain        = var.jenkins_google_oauth_domain
   })
   filename = "${path.module}/docker_jenkins/files/casc_configs/jenkins.yml"
 }

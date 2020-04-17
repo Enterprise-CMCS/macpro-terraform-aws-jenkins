@@ -1,7 +1,7 @@
 #!/bin/bash
 
-repository_url=`echo $1 | sed 's~http[s]*://~~g'`
-image_name=$2
+repository_url=735575797588.dkr.ecr.us-east-1.amazonaws.com/jenkins_ecr_repo
+image_name=jenkins
 
 eval $(aws ecr get-login --region us-east-1 --no-include-email)
 
