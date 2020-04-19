@@ -24,6 +24,6 @@ complete-example:
   script:
     - cd examples/simple
     - terraform init -backend-config="bucket=$TF_STATE_BUCKET" -backend-config="key=terraform-aws-jenkins-examples-common.tfstate"
-    # - terraform destroy -auto-approve
-    # - terraform apply -auto-approve
-    # - terraform destroy -auto-approve
+    - terraform destroy -auto-approve
+    - terraform apply -auto-approve
+    - terraform destroy -auto-approve
