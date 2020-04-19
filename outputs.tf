@@ -31,5 +31,5 @@ output "ecs_task_private_endpoint" {
 
 output "jenkins_url" {
   description = "Jenkins' URL.  Put this in a browser."
-  value       = "https://${aws_route53_record.record.fqdn}/"
+  value       = "${local.scheme}://${local.endpoint}"
 }
