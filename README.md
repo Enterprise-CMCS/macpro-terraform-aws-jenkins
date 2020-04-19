@@ -1,5 +1,7 @@
 # Jenkins ECS Terraform Module
 
+[![pipeline status](https://gitlab.com/collabralink/delivery/terraform-aws-jenkins/badges/master/pipeline.svg)](https://gitlab.com/collabralink/delivery/terraform-aws-jenkins/-/commits/master)
+
 A containerized Jenkins Master implementation orchestrated by ECS.
 - An EC2 Auto Scaling Group is created to ensure an ECS Host is available.
 - A Jenkins Master ECS Service is created to keep Jenkins up and running, despite host failure or sudden unavailability.
