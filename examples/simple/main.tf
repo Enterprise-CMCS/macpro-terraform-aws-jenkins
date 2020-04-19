@@ -13,12 +13,13 @@ terraform {
   }
 }
 
+variable "name" {}
+
 ###############################
 # Build a VPC for this example
 ###############################
 locals {
   vpc_cidr     = "10.10.0.0/16"
-  example_name = "simple"
 }
 
 data "aws_availability_zones" "available" {}
@@ -34,7 +35,7 @@ resource "null_resource" "subnets" {
 module "vpc" {
   source               = "terraform-aws-modules/vpc/aws"
   version              = "2.9.0"
-  name                 = local.example_name
+  name                 = var.name
   cidr                 = local.vpc_cidr
   azs                  = data.aws_availability_zones.available.names
   private_subnets      = null_resource.subnets.*.triggers.private_subnet
@@ -51,7 +52,7 @@ module "vpc" {
 
 module "jenkins" {
   source                         = "../.."
-  name                           = local.example_name
+  name                           = var.name
   vpc_id                         = module.vpc.vpc_id
   host_instance_type             = "t3a.small"
   host_key_name                  = "examples"
