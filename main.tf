@@ -1,6 +1,9 @@
 
 locals {
   ebs_volume_name = "${var.prefix}-persistent-data-${var.name}"
+  ssl             = var.fqdn_certificate_arn == "" ? false : true
+  scheme          = local.ssl == true ? "https" : "http"
+  endpoint        = var.fqdn == "" ? aws_alb.alb.dns_name : aws_route53_record.record[0].fqdn
 }
 
 data "aws_region" "this" {}
@@ -232,28 +235,36 @@ resource "aws_ecs_service" "ecs_service" {
 
 resource "aws_security_group" "alb" {
   name        = "${var.prefix}-alb-${var.name}"
-  description = "Allow 443 and 80"
+  description = "Jenkins Application Load Balancer security group for ${var.name}"
   vpc_id      = var.vpc_id
-  ingress {
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-  ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-  egress {
-    from_port = 0
-    to_port   = 0
-    protocol  = "-1"
-    cidr_blocks = [
-      "0.0.0.0/0",
-    ]
-  }
+}
+
+resource "aws_security_group_rule" "alb_egress" {
+  type                     = "egress"
+  from_port                = 8080
+  to_port                  = 8080
+  protocol                 = "tcp"
+  source_security_group_id = aws_security_group.ecs_task.id
+  security_group_id        = aws_security_group.alb.id
+}
+
+resource "aws_security_group_rule" "alb_ingress_80" {
+  type              = "ingress"
+  from_port         = 80
+  to_port           = 80
+  protocol          = "tcp"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.alb.id
+}
+
+resource "aws_security_group_rule" "alb_ingress_443" {
+  count             = local.ssl == true ? 1 : 0
+  type              = "ingress"
+  from_port         = 443
+  to_port           = 443
+  protocol          = "tcp"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.alb.id
 }
 
 resource "aws_alb_target_group" "target_group" {
@@ -278,11 +289,14 @@ resource "aws_alb_target_group" "target_group" {
 
 resource "aws_alb" "alb" {
   name            = "${var.prefix}-${var.name}"
+  internal        = var.load_balancer_internal
   subnets         = var.load_balancer_subnets
   security_groups = [aws_security_group.alb.id]
 }
 
-resource "aws_alb_listener" "front_end" {
+# Conditionally create an ALB listener which forwards 443 traffic to the jenkins target group.
+resource "aws_alb_listener" "https_forward" {
+  count             = local.ssl == true ? 1 : 0
   load_balancer_arn = aws_alb.alb.id
   port              = "443"
   protocol          = "HTTPS"
@@ -293,7 +307,21 @@ resource "aws_alb_listener" "front_end" {
   }
 }
 
+# Conditionally create an ALB listener which forwards 80 traffic to the jenkins target group.
+resource "aws_alb_listener" "http_forward" {
+  count             = local.ssl == true ? 0 : 1
+  load_balancer_arn = aws_alb.alb.id
+  port              = "80"
+  protocol          = "HTTP"
+  default_action {
+    target_group_arn = aws_alb_target_group.target_group.id
+    type             = "forward"
+  }
+}
+
+# Conditionally create an ALB listener which redirects 80 traffic to 443
 resource "aws_alb_listener" "http_to_https_redirect" {
+  count             = local.ssl == true ? 1 : 0
   load_balancer_arn = aws_alb.alb.id
   port              = "80"
   protocol          = "HTTP"
@@ -309,11 +337,13 @@ resource "aws_alb_listener" "http_to_https_redirect" {
 }
 
 data "aws_route53_zone" "zone" {
-  name = var.fqdn_hosted_zone
+  count = var.fqdn == "" ? 0 : 1
+  name  = var.fqdn_hosted_zone
 }
 
 resource "aws_route53_record" "record" {
-  zone_id = data.aws_route53_zone.zone.zone_id
+  count   = var.fqdn == "" ? 0 : 1
+  zone_id = data.aws_route53_zone.zone[0].zone_id
   name    = var.fqdn
   type    = "CNAME"
   ttl     = "5"

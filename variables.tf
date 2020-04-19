@@ -9,18 +9,21 @@ variable "auto_scaling_subnets" {
 }
 
 variable "fqdn" {
-  description = "The FQDN with which jenkins is accessed."
+  description = "The FQDN with which jenkins is accessed; leave blank to simnply access Jenkins with the generated DNS name of the load balancer.  If set, fqdn_hosted_zone is required."
   type        = string
+  default     = ""
 }
 
 variable "fqdn_certificate_arn" {
-  description = "The arn of the ACM certificate that gets applied to jenkins ALB.  This certificate should be valid for the supplied fqdn value."
+  description = "The arn of the ACM certificate that gets applied to jenkins ALB.  Setting this effectively enables SSL.  The certificate's domain must be valid for the set fqdn and fqdn_hosted_one.  If set, fqdn and fqdn_hosted_zone are required."
   type        = string
+  default     = ""
 }
 
 variable "fqdn_hosted_zone" {
-  description = "The hosted zone in which to create the route 53 record for jenkins.  The fqdn should fall inside this hosted zone."
+  description = "The hosted zone in which to create the route 53 record for jenkins.  The fqdn should fall inside this hosted zone.  If set, fqdn is required"
   type        = string
+  default     = ""
 }
 
 variable "host_instance_type" {
@@ -60,6 +63,12 @@ variable "jenkins_home_snapshot_id" {
 variable "load_balancer_subnets" {
   description = "The subnets the load balancer will include."
   type        = list
+}
+
+variable "load_balancer_internal" {
+  description = "Set to true to create a publicly-resolvable but non-publicly-accessible load balancer for jenkins.  If set to true, load_balancer_subnets must be given private subnets."
+  type        = bool
+  default     = false
 }
 
 variable "name" {

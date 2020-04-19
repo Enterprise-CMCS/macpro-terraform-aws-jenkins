@@ -56,15 +56,16 @@ WIP
 |------|-------------|:----:|:-----:|:-----:|
 | auto\_scaling\_availability\_zone | The single AZ into which Jenkins should be launched. | string | n/a | yes |
 | auto\_scaling\_subnets | The subnets for the Jenkins auto scaling group into which Jenkins may be placed. | list | n/a | yes |
-| fqdn | The FQDN with which jenkins is accessed. | string | n/a | yes |
-| fqdn\_certificate\_arn | The arn of the ACM certificate that gets applied to jenkins ALB.  This certificate should be valid for the supplied fqdn value. | string | n/a | yes |
-| fqdn\_hosted\_zone | The hosted zone in which to create the route 53 record for jenkins.  The fqdn should fall inside this hosted zone. | string | n/a | yes |
+| fqdn | The FQDN with which jenkins is accessed; leave blank to simnply access Jenkins with the generated DNS name of the load balancer.  If set, fqdn_hosted_zone is required. | string | `""` | no |
+| fqdn\_certificate\_arn | The arn of the ACM certificate that gets applied to jenkins ALB.  Setting this effectively enables SSL.  The certificate's domain must be valid for the set fqdn and fqdn_hosted_one.  If set, fqdn and fqdn_hosted_zone are required. | string | `""` | no |
+| fqdn\_hosted\_zone | The hosted zone in which to create the route 53 record for jenkins.  The fqdn should fall inside this hosted zone.  If set, fqdn is required | string | `""` | no |
 | host\_instance\_type | Jenkins master instance type | string | `"m5.xlarge"` | no |
 | host\_key\_name | SSH key name in your AWS account for AWS instances. | string | n/a | yes |
 | host\_security\_groups | Additional security groups to add to the jenkins host.  Warning:  These will only take affect when the next EC2 instance is launched by autoscaling.  You may want to use the ecs_host_security_group_id output to attach a new rule externally. | list | `[]` | no |
 | image | Jenkins image to use | string | `"jenkins/jenkins:lts-centos"` | no |
 | jenkins\_home\_size | The size in GB for the jenkins_home volume.  If using with jenkins_home_snapshot_id, size must be greater than the snapshot size. | string | `"50"` | no |
 | jenkins\_home\_snapshot\_id | The snapshot ID from which to build the ebs volume. | string | `""` | no |
+| load\_balancer\_internal | Set to true to create a publicly-resolvable but non-publicly-accessible load balancer for jenkins.  If set to true, load_balancer_subnets must be given private subnets. | bool | `"false"` | no |
 | load\_balancer\_subnets | The subnets the load balancer will include. | list | n/a | yes |
 | name | Name for the Jenkins installation.  This is used in prefixes and suffixes. | string | n/a | yes |
 | prefix | Prefix used in naming resources | string | `"jenkins"` | no |
