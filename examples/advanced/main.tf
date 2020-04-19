@@ -30,8 +30,8 @@ module "vpc" {
   public_subnets       = null_resource.subnets.*.triggers.public_subnet
   enable_dns_hostnames = true
   enable_dns_support   = true
-  enable_nat_gateway   = true
-  single_nat_gateway   = true
+  enable_nat_gateway   = false
+  single_nat_gateway   = false
 }
 
 #########################################
@@ -39,7 +39,8 @@ module "vpc" {
 #########################################
 
 module "jenkins" {
-  source                         = "git::ssh://git@gitlab.com/collabralink/delivery/terraform-aws-jenkins.git"
+  #source                         = "git::ssh://git@gitlab.com/collabralink/delivery/terraform-aws-jenkins.git"
+  source                         = "git::https://github.com/joeaero19/jenkins-fargate.git"
   name                           = var.name
   vpc_id                         = module.vpc.vpc_id
   host_instance_type             = var.host_instance_type
@@ -47,10 +48,10 @@ module "jenkins" {
   auto_scaling_subnets           = [module.vpc.private_subnets[0]]
   auto_scaling_availability_zone = data.aws_availability_zones.available.names[0]
   load_balancer_subnets          = module.vpc.public_subnets
-  fqdn                           = var.jenkins_fqdn
-  fqdn_hosted_zone               = var.jenkins_hosted_zone
-  fqdn_certificate_arn           = var.jenkins_fqdn_certificate_arn
-  image                          = aws_ecr_repository.jenkins.repository_url
+  #fqdn                           = []
+  #fqdn_hosted_zone               = []
+  #fqdn_certificate_arn           = []
+  image                          = " aws_ecr_repository.jenkins.repository_url"
 }
 
 ###########################################################
@@ -158,7 +159,7 @@ resource "aws_launch_configuration" "ecs_host" {
   image_id                    = data.aws_ami.ecs_optimized.id
   instance_type               = "t3a.small"
   security_groups             = flatten([aws_security_group.jenkins_slave.id])
-  key_name                    = "examples"
+  key_name                    = var.host_key_name
   associate_public_ip_address = false
   iam_instance_profile        = aws_iam_instance_profile.ecs_host.name
   user_data = templatefile("${path.module}/templates/user_data.tpl", {

@@ -3,13 +3,14 @@
 # See the terraform.tfvars.example file for guidance.
 
 variable "name" {}
+variable "image" {}
 variable "vpc_cidr" {}
 variable "host_instance_type" {}
 variable "host_key_name" {}
-variable "jenkins_fqdn" {}
-variable "jenkins_fqdn_certificate_arn" {}
-variable "jenkins_hosted_zone" {}
+#variable "jenkins_fqdn" {}
+#variable "jenkins_fqdn_certificate_arn" {}
+#variable "jenkins_hosted_zone" {}
 variable "jenkins_ecr_repo_name" {}
-variable "jenkins_google_oauth_client_id" {}
-variable "jenkins_google_oauth_client_secret" {}
-variable "jenkins_google_oauth_domain" {}
+#variable "jenkins_google_oauth_client_id" {}
+#variable "jenkins_google_oauth_client_secret" {}
+#variable "jenkins_google_oauth_domain" {}
