@@ -13,6 +13,8 @@ terraform {
   }
 }
 
+variable "name" {}
+
 ###############################
 # Build a VPC for this example
 ###############################
