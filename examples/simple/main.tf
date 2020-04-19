@@ -6,12 +6,19 @@ provider "aws" {
   region = "us-east-1"
 }
 
+terraform {
+  backend "s3" {
+    region  = "us-east-1"
+    encrypt = true
+  }
+}
+
 ###############################
 # Build a VPC for this example
 ###############################
 locals {
-  vpc_cidr     = "10.110.0.0/16"
-  example_name = "common"
+  vpc_cidr     = "10.10.0.0/16"
+  example_name = "simple"
 }
 
 data "aws_availability_zones" "available" {}
@@ -36,7 +43,6 @@ module "vpc" {
   enable_dns_support   = true
   enable_nat_gateway   = true
   single_nat_gateway   = true
-  enable_s3_endpoint   = true
 }
 
 #########################################
@@ -47,24 +53,9 @@ module "jenkins" {
   source                         = "../.."
   name                           = local.example_name
   vpc_id                         = module.vpc.vpc_id
-  host_instance_type             = "t3.small"
+  host_instance_type             = "t3a.small"
   host_key_name                  = "examples"
   auto_scaling_subnets           = [module.vpc.private_subnets[0]]
   auto_scaling_availability_zone = data.aws_availability_zones.available.names[0]
   load_balancer_subnets          = module.vpc.public_subnets
-  fqdn                           = "jenkins-${local.example_name}.examples.cl-demo.com"
-  fqdn_hosted_zone               = "cl-demo.com"
-  fqdn_certificate_arn           = "arn:aws:acm:us-east-1:008087533974:certificate/d3303ea6-6bb5-4ae8-93cc-8bad2ddb1345"
-}
-
-############################################################################
-# Open port 22 on the Jenkins ECS Host, maybe for development or debugging.
-############################################################################
-resource "aws_security_group_rule" "dev_public_ssh" {
-  type              = "ingress"
-  from_port         = 22
-  to_port           = 22
-  protocol          = "tcp"
-  cidr_blocks       = ["0.0.0.0/0"]
-  security_group_id = module.jenkins.ecs_host_security_group_id
 }
