@@ -10,10 +10,9 @@ terraform {
   backend "s3" {
     region  = "us-east-1"
     encrypt = true
+    key = "gitlab/collabralink/delivery/terraform-aws-jenkins/examples/simple"
   }
 }
-
-variable "name" {}
 
 ###############################
 # Build a VPC for this example
@@ -35,7 +34,7 @@ resource "null_resource" "subnets" {
 module "vpc" {
   source               = "terraform-aws-modules/vpc/aws"
   version              = "2.9.0"
-  name                 = var.name
+  name                 = "jenkins-simple-${terraform.workspace}"
   cidr                 = local.vpc_cidr
   azs                  = data.aws_availability_zones.available.names
   private_subnets      = null_resource.subnets.*.triggers.private_subnet
@@ -52,7 +51,7 @@ module "vpc" {
 
 module "jenkins" {
   source                         = "../.."
-  name                           = var.name
+  name                           = "simple-${terraform.workspace}"
   vpc_id                         = module.vpc.vpc_id
   host_instance_type             = "t3a.small"
   host_key_name                  = "examples"
