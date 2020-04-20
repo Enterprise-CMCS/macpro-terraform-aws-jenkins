@@ -23,7 +23,9 @@ complete-example:
     - aws configure set default.region us-east-1
   script:
     - cd examples/simple
-    - terraform init -backend-config="bucket=$TF_STATE_BUCKET" -backend-config="key=terraform-aws-jenkins-examples-simple-$CI_COMMIT_REF_NAME.tfstate" -var="name=simple-$CI_COMMIT_REF_NAME"
-    - terraform destroy -auto-approve -var="name=simple-$CI_COMMIT_REF_NAME"
-    - terraform apply -auto-approve -var="name=simple-$CI_COMMIT_REF_NAME"
-    - terraform destroy -auto-approve -var="name=simple-$CI_COMMIT_REF_NAME"
+    - terraform init -backend-config="bucket=$TF_STATE_BUCKET" -var="name=simple-$CI_COMMIT_REF_NAME"
+    - terraform workspace new $CI_COMMIT_REF_NAME || true
+    - terraform workspace select $CI_COMMIT_REF_NAME
+    - terraform destroy -auto-approve
+    - terraform apply -auto-approve
+    - terraform destroy -auto-approve
