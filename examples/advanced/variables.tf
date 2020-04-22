@@ -5,7 +5,6 @@
 variable "name" {}
 variable "vpc_cidr" {}
 variable "host_instance_type" {}
-variable "host_key_name" {}
 variable "jenkins_fqdn" {}
 variable "jenkins_fqdn_certificate_arn" {}
 variable "jenkins_hosted_zone" {}
