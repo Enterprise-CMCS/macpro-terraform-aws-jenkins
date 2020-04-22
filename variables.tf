@@ -33,8 +33,9 @@ variable "host_instance_type" {
 }
 
 variable "host_key_name" {
-  description = "SSH key name in your AWS account for AWS instances."
+  description = "Name of an existing EC2 Key Pair to attach to the Jenkins Host."
   type        = string
+  default     = ""
 }
 
 variable "host_security_groups" {

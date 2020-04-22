@@ -10,7 +10,7 @@ terraform {
   backend "s3" {
     region  = "us-east-1"
     encrypt = true
-    key = "gitlab/collabralink/delivery/terraform-aws-jenkins/examples/advanced"
+    key     = "gitlab/collabralink/delivery/terraform-aws-jenkins/examples/advanced"
   }
 }
 
@@ -51,7 +51,6 @@ module "jenkins" {
   name                           = var.name
   vpc_id                         = module.vpc.vpc_id
   host_instance_type             = var.host_instance_type
-  host_key_name                  = var.host_key_name
   auto_scaling_subnets           = [module.vpc.private_subnets[0]]
   auto_scaling_availability_zone = data.aws_availability_zones.available.names[0]
   load_balancer_subnets          = module.vpc.public_subnets
@@ -62,7 +61,7 @@ module "jenkins" {
 }
 
 resource "aws_iam_role_policy_attachment" "ssm" {
-  role      = module.jenkins.ecs_host_role_id
+  role       = module.jenkins.ecs_host_role_id
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
 }
 
@@ -159,7 +158,7 @@ resource "aws_iam_role_policy" "ecs_host" {
 }
 
 resource "aws_iam_role_policy_attachment" "ssm_slave_host" {
-  role      = aws_iam_role.ecs_host.id
+  role       = aws_iam_role.ecs_host.id
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
 }
 
@@ -176,7 +175,6 @@ resource "aws_launch_configuration" "ecs_host" {
   image_id                    = data.aws_ami.ecs_optimized.id
   instance_type               = "t3a.small"
   security_groups             = flatten([aws_security_group.jenkins_slave.id])
-  key_name                    = "examples"
   associate_public_ip_address = false
   iam_instance_profile        = aws_iam_instance_profile.ecs_host.name
   user_data = templatefile("${path.module}/templates/user_data.tpl", {
