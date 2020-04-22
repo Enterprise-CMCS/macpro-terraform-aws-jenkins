@@ -8,7 +8,6 @@ vpc_cidr = "10.151.0.0/16"
 
 # Configuration for the Jenkins ECS Host
 host_instance_type = "t3a.small"
-host_key_name      = "examples"
 
 # Set FQDN and DNS related variables
 jenkins_fqdn                 = "jenkins-advanced.examples.cl-demo.com"
