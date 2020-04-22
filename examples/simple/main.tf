@@ -34,7 +34,7 @@ resource "null_resource" "subnets" {
 module "vpc" {
   source               = "terraform-aws-modules/vpc/aws"
   version              = "2.9.0"
-  name                 = "jenkins-simple-${terraform.workspace}"
+  name                 = terraform.workspace
   cidr                 = local.vpc_cidr
   azs                  = data.aws_availability_zones.available.names
   private_subnets      = null_resource.subnets.*.triggers.private_subnet
@@ -51,7 +51,7 @@ module "vpc" {
 
 module "jenkins" {
   source                         = "../.."
-  name                           = "simple-${terraform.workspace}"
+  name                           = terraform.workspace
   vpc_id                         = module.vpc.vpc_id
   host_instance_type             = "t3a.small"
   auto_scaling_subnets           = [module.vpc.private_subnets[0]]
