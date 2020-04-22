@@ -24,7 +24,6 @@ module "jenkins" {
   name                           = "jenkins"
   vpc_id                         = "vpc-abc123"
   host_instance_type             = "t3.large"
-  host_key_name                  = "myEC2KeyPair"
   auto_scaling_subnets           = ["subnet-123afb39d0dagdv32","subnet-004aff23j60dwez897"]
   auto_scaling_availability_zone = "us-east-1a"
   load_balancer_subnets          = ["subnet-277afb45g0dagdv32","subnet-3288vvssdwezf221xv"]
@@ -64,7 +63,7 @@ WIP
 | fqdn\_certificate\_arn | The arn of the ACM certificate that gets applied to jenkins ALB.  Setting this effectively enables SSL.  The certificate's domain must be valid for the set fqdn and fqdn_hosted_one.  If set, fqdn and fqdn_hosted_zone are required. | string | `""` | no |
 | fqdn\_hosted\_zone | The hosted zone in which to create the route 53 record for jenkins.  The fqdn should fall inside this hosted zone.  If set, fqdn is required | string | `""` | no |
 | host\_instance\_type | Jenkins master instance type | string | `"m5.xlarge"` | no |
-| host\_key\_name | SSH key name in your AWS account for AWS instances. | string | n/a | yes |
+| host\_key\_name | Name of an existing EC2 Key Pair to attach to the Jenkins Host. | string | `""` | no |
 | host\_security\_groups | Additional security groups to add to the jenkins host.  Warning:  These will only take affect when the next EC2 instance is launched by autoscaling.  You may want to use the ecs_host_security_group_id output to attach a new rule externally. | list | `[]` | no |
 | image | Jenkins image to use | string | `"jenkins/jenkins:lts-centos"` | no |
 | jenkins\_home\_size | The size in GB for the jenkins_home volume.  If using with jenkins_home_snapshot_id, size must be greater than the snapshot size. | string | `"50"` | no |
