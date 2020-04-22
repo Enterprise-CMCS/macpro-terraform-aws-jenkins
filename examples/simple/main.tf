@@ -59,3 +59,8 @@ module "jenkins" {
   auto_scaling_availability_zone = data.aws_availability_zones.available.names[0]
   load_balancer_subnets          = module.vpc.public_subnets
 }
+
+resource "aws_iam_role_policy_attachment" "ssm" {
+  role      = module.jenkins.ecs_host_role_id
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+}

@@ -6,6 +6,14 @@ provider "aws" {
   region = "us-east-1"
 }
 
+terraform {
+  backend "s3" {
+    region  = "us-east-1"
+    encrypt = true
+    key = "gitlab/collabralink/delivery/terraform-aws-jenkins/examples/advanced"
+  }
+}
+
 ###############################
 # Build a VPC for this example
 ###############################
@@ -51,6 +59,11 @@ module "jenkins" {
   fqdn_hosted_zone               = var.jenkins_hosted_zone
   fqdn_certificate_arn           = var.jenkins_fqdn_certificate_arn
   image                          = aws_ecr_repository.jenkins.repository_url
+}
+
+resource "aws_iam_role_policy_attachment" "ssm" {
+  role      = module.jenkins.ecs_host_role_id
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
 }
 
 ###########################################################
@@ -143,6 +156,11 @@ resource "aws_iam_role_policy" "ecs_host" {
   name   = "jenkins-slave-ecs-host-${var.name}"
   role   = aws_iam_role.ecs_host.id
   policy = file("./files/ecs-host-policy.json")
+}
+
+resource "aws_iam_role_policy_attachment" "ssm_slave_host" {
+  role      = aws_iam_role.ecs_host.id
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
 }
 
 # re: EC2 tasks.  IAM instance profile to be attached to EC2 instances.
