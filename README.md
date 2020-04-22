@@ -36,7 +36,7 @@ module "jenkins" {
 
 
 ## Examples
-See a common implementation (complete with VPC)  [here!](examples/common)
+[Simple](examples/simple) and [advanced](examples/advanced) examples are included in the examples folder.
 
 
 ## Contributing / To-Do
@@ -44,6 +44,8 @@ See a common implementation (complete with VPC)  [here!](examples/common)
 See current open [issues](https://gitlab.com/collabralink/delivery/terraform-aws-jenkins/issues) or check out the [board](https://gitlab.com/collabralink/delivery/terraform-aws-jenkins/-/boards)
 
 Please feel free to open new issues for defects or enhancements.
+
+Merge requests are being accepted.
 
 
 ## Notes
@@ -95,4 +97,4 @@ Module managed by [Mike Dial](https://gitlab.com/mdialcollabralinkcom).
 
 ## License
 
-Collabralink use only until advised differently (not a lawyer).
+Copyright, Collabralink Technologies Inc.
