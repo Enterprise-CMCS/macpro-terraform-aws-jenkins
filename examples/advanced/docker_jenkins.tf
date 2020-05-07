@@ -28,6 +28,11 @@ resource "local_file" "jenkins_yml" {
         family      = aws_ecs_task_definition.fargate_jnlp_slave.family
         launch_type = join(",", aws_ecs_task_definition.fargate_jnlp_slave.requires_compatibilities)
       }
+      fargate_appian_slave = {
+        label       = "fargate-appian-slave"
+        family      = aws_ecs_task_definition.fargate_appian_slave.family
+        launch_type = join(",", aws_ecs_task_definition.fargate_appian_slave.requires_compatibilities)
+      }
       jenkins_alternative_url            = "http://${module.jenkins.ecs_task_private_endpoint}:8080"
       jenkins_google_oauth_client_id     = var.jenkins_google_oauth_client_id
       jenkins_google_oauth_client_secret = var.jenkins_google_oauth_client_secret
