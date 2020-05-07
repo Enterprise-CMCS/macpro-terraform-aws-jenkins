@@ -255,7 +255,7 @@ resource "aws_iam_role_policy" "slave_ec2_ecs_task_definition_policy_for_master"
   role = module.jenkins.ecs_task_role_id
 }
 
-# ECS EC2 JNLP Slave - Create task definition
+# ECS Fargate JNLP Slave - Create task definition
 resource "aws_ecs_task_definition" "fargate_jnlp_slave" {
   family                   = "fargate-jnlp-slave-${var.name}"
   container_definitions    = file("${path.module}/files/task-def-jenkins-jnlp-slave-fargate.txt")
@@ -273,6 +273,28 @@ resource "aws_iam_role_policy" "slave_fargate_ecs_task_definition_policy_for_mas
     region               = data.aws_region.current.name
     account_id           = data.aws_caller_identity.current.account_id
     task_definition_name = aws_ecs_task_definition.fargate_jnlp_slave.family
+  })
+  role = module.jenkins.ecs_task_role_id
+}
+
+# ECS Fargate Appian Slave - Create task definition
+resource "aws_ecs_task_definition" "fargate_appian_slave" {
+  family                   = "fargate-appian-slave-${var.name}"
+  container_definitions    = file("${path.module}/files/task-def-jenkins-appian-slave-fargate.txt")
+  task_role_arn            = aws_iam_role.ecs_task.arn
+  requires_compatibilities = ["FARGATE"]
+  network_mode             = "awsvpc"
+  cpu                      = 2048
+  memory                   = 4096
+}
+
+# ECS Fargate Appian Slave - Allow Jenkins Master permission to launch task(s)
+resource "aws_iam_role_policy" "slave_fargate_appian_ecs_task_definition_policy_for_master" {
+  name = "fargate-appian-slave-launch-permission-${var.name}"
+  policy = templatefile("${path.module}/templates/slave-ecs-task-definition-policy-for-master.json.tpl", {
+    region               = data.aws_region.current.name
+    account_id           = data.aws_caller_identity.current.account_id
+    task_definition_name = aws_ecs_task_definition.fargate_appian_slave.family
   })
   role = module.jenkins.ecs_task_role_id
 }
