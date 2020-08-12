@@ -1,4 +1,4 @@
-# terraform-aws-jenkins
+# terraform-aws-jenkins [![latest release](https://img.shields.io/github/release/collabralink-technology/terraform-aws-jenkins.svg)](https://github.com/collabralink-technology/terraform-aws-jenkins/releases/latest)
 
 ![Collabralink](https://collabralink.com/wp-content/uploads/logo.png)
 
