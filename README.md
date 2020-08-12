@@ -46,7 +46,12 @@ See current open [issues](https://github.com/collabralink-technology/quickstart-
 
 Please feel free to open new issues for defects or enhancements.
 
-Merge requests are being accepted.
+To contribute:
+- Fork this repository
+- Make changes in your fork
+- Open a pull request targetting this repository
+
+Pull requests are being accepted.
 
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
