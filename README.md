@@ -1,4 +1,4 @@
-# terraform-aws-jenkins [![latest release](https://img.shields.io/github/release/collabralink-technology/terraform-aws-jenkins.svg)](https://github.com/collabralink-technology/terraform-aws-jenkins/releases/latest)
+# terraform-aws-jenkins [![latest release](https://img.shields.io/github/release/cmsgov/terraform-aws-jenkins.svg)](https://github.com/cmsgov/terraform-aws-jenkins/releases/latest)
 
 ![Collabralink](https://collabralink.com/wp-content/uploads/logo.png)
 
@@ -22,7 +22,7 @@ Note:  Below, we are pinning our module source to release 2.2.2 as an example.  
 
 ```hcl
 module "jenkins" {
-  source                         = "git::https://github.com/collabralink-technology/terraform-aws-jenkins.git?ref=2.2.2"
+  source                         = "git::https://github.com/cmsgov/terraform-aws-jenkins.git?ref=2.2.2"
   name                           = "jenkins"
   vpc_id                         = "vpc-abc123"
   host_instance_type             = "t3.large"
@@ -42,7 +42,7 @@ module "jenkins" {
 
 ## Contributing / To-Do
 
-See current open [issues](https://github.com/collabralink-technology/terraform-aws-jenkins/issues) or check out the [project board](https://github.com/collabralink-technology/terraform-aws-jenkins/projects/1)
+See current open [issues](https://github.com/cmsgov/terraform-aws-jenkins/issues) or check out the [project board](https://github.com/cmsgov/terraform-aws-jenkins/projects/1)
 
 Please feel free to open new issues for defects or enhancements.
 
@@ -113,4 +113,4 @@ work worldwide through the CC0 1.0 Universal public domain dedication.
   [dial_homepage]: https://github.com/mdial89f
   [dial_avatar]: https://avatars.githubusercontent.com/mdial89f?size=150
 
-See [contributor graphs](https://github.com/collabralink-technology/quickstart-tech-challenge/graphs/contributors) for full details.
+See [contributor graphs](https://github.com/cmsgov/quickstart-tech-challenge/graphs/contributors) for full details.
