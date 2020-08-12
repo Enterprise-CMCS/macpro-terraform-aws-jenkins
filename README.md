@@ -1,8 +1,8 @@
-# Jenkins ECS Terraform Module
+# terraform-aws-jenkins [![latest release](https://img.shields.io/github/release/collabralink-technology/terraform-aws-jenkins.svg)](https://github.com/collabralink-technology/terraform-aws-jenkins/releases/latest)
 
-[![pipeline status](https://gitlab.com/collabralink/delivery/terraform-aws-jenkins/badges/master/pipeline.svg)](https://gitlab.com/collabralink/delivery/terraform-aws-jenkins/-/commits/master)
+![Collabralink](https://collabralink.com/wp-content/uploads/logo.png)
 
-A containerized Jenkins Master implementation orchestrated by ECS.
+A terraform module to provision a containerized Jenkins Master implementation orchestrated by ECS.
 - An EC2 Auto Scaling Group is created to ensure an ECS Host is available.
 - A Jenkins Master ECS Service is created to keep Jenkins up and running, despite host failure or sudden unavailability.
 - Persistence of jenkins_home is ensured with a reattachable EBS volume orchestrated by a docker plugin.
@@ -16,11 +16,13 @@ Terraform 0.12 +
 
 
 ## Usage
-See a common implementation (complete with VPC) [here!](examples/common)
+[Simple](examples/simple) and [advanced](examples/advanced) examples are included in the examples folder.
+
+Note:  Below, we are pinning our module source to release 2.2.2 as an example.  Pinning to a specific release is a good practice, as it helps prevent bringing in breaking changes unwittingly.  The version pinned below is not guaranteed to reflect the latest version, since this block may not be kept strictly up to date.  Check the releases for new versions!
 
 ```hcl
 module "jenkins" {
-  source                         = "git::ssh://git@gitlab.com/collabralink/delivery/terraform-aws-jenkins.git"
+  source                         = "git::https://github.com/collabralink-technology/terraform-aws-jenkins.git?ref=2.2.2"
   name                           = "jenkins"
   vpc_id                         = "vpc-abc123"
   host_instance_type             = "t3.large"
@@ -40,16 +42,16 @@ module "jenkins" {
 
 ## Contributing / To-Do
 
-See current open [issues](https://gitlab.com/collabralink/delivery/terraform-aws-jenkins/issues) or check out the [board](https://gitlab.com/collabralink/delivery/terraform-aws-jenkins/-/boards)
+See current open [issues](https://github.com/collabralink-technology/terraform-aws-jenkins/issues) or check out the [project board](https://github.com/collabralink-technology/terraform-aws-jenkins/projects/1)
 
 Please feel free to open new issues for defects or enhancements.
 
-Merge requests are being accepted.
+To contribute:
+- Fork this repository
+- Make changes in your fork
+- Open a pull request targetting this repository
 
-
-## Notes
-
-WIP
+Pull requests are being accepted.
 
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
@@ -89,11 +91,26 @@ WIP
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 
 
-## Authors
-
-Currently maintained by [these contributors](https://gitlab.com/collabralink/delivery/terraform-aws-jenkins/-/graphs/master) at Collabralink Technologies, Inc.
-Module managed by [Mike Dial](https://gitlab.com/mdialcollabralinkcom).
-
 ## License
 
-Copyright, Collabralink Technologies Inc.
+[![License](https://img.shields.io/badge/License-CC0--1.0--Universal-blue.svg)](https://creativecommons.org/publicdomain/zero/1.0/legalcode)
+
+See [LICENSE](LICENSE.md) for full details.
+
+```text
+As a work of the United States Government, this project is
+in the public domain within the United States.
+
+Additionally, we waive copyright and related rights in the
+work worldwide through the CC0 1.0 Universal public domain dedication.
+```
+
+### Contributors
+
+|  [![Mike Dial][dial_avatar]][dial_homepage]<br/>[Mike Dial][dial_homepage] |
+|---|
+
+  [dial_homepage]: https://github.com/mdial89f
+  [dial_avatar]: https://avatars.githubusercontent.com/mdial89f?size=150
+
+See [contributor graphs](https://github.com/collabralink-technology/quickstart-tech-challenge/graphs/contributors) for full details.
