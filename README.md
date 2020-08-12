@@ -1,5 +1,6 @@
 # Jenkins ECS Terraform Module
 
+![Collabralink](https://collabralink.com/wp-content/uploads/logo.png)
 
 A containerized Jenkins Master implementation orchestrated by ECS.
 - An EC2 Auto Scaling Group is created to ensure an ECS Host is available.
