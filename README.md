@@ -87,7 +87,14 @@ Merge requests are being accepted.
 
 ## License
 
+[![License](https://img.shields.io/badge/License-CC0--1.0--Universal-blue.svg)](https://creativecommons.org/publicdomain/zero/1.0/legalcode)
+
 See [LICENSE](LICENSE.md) for full details.
+
+```text
+As a work of the United States Government, this project is in the public domain within the United States.
+Additionally, we waive copyright and related rights in the work worldwide through the CC0 1.0 Universal public domain dedication.
+```
 
 ### Contributors
 
