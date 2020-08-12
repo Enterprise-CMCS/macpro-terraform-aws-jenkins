@@ -22,7 +22,7 @@ Note:  Below, we are pinning our module source to release 2.2.2 as an example.  
 
 ```hcl
 module "jenkins" {
-  source                         = "git::https://github.com/collabralink-technology/quickstart-tech-challenge.git?ref=2.2.2"
+  source                         = "git::https://github.com/collabralink-technology/terraform-aws-jenkins.git?ref=2.2.2"
   name                           = "jenkins"
   vpc_id                         = "vpc-abc123"
   host_instance_type             = "t3.large"
@@ -42,7 +42,7 @@ module "jenkins" {
 
 ## Contributing / To-Do
 
-See current open [issues](https://github.com/collabralink-technology/quickstart-tech-challenge/issues) or check out the [project board](https://github.com/collabralink-technology/quickstart-tech-challenge/projects/1)
+See current open [issues](https://github.com/collabralink-technology/terraform-aws-jenkins/issues) or check out the [project board](https://github.com/collabralink-technology/terraform-aws-jenkins/projects/1)
 
 Please feel free to open new issues for defects or enhancements.
 
@@ -98,16 +98,16 @@ Pull requests are being accepted.
 See [LICENSE](LICENSE.md) for full details.
 
 ```text
-As a work of the United States Government, this project is 
+As a work of the United States Government, this project is
 in the public domain within the United States.
 
-Additionally, we waive copyright and related rights in the 
+Additionally, we waive copyright and related rights in the
 work worldwide through the CC0 1.0 Universal public domain dedication.
 ```
 
 ### Contributors
 
-See [contributor graphs](https://github.com/collabralink-technology/quickstart-tech-challenge/graphs/contributors) for full details.
+See [contributor graphs](https://github.com/collabralink-technology/terraform-aws-jenkins/graphs/contributors) for full details.
 
 |  [![Mike Dial][dial_avatar]][dial_homepage]<br/>[Mike Dial][dial_homepage] |
 |---|
