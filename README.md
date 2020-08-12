@@ -101,10 +101,10 @@ work worldwide through the CC0 1.0 Universal public domain dedication.
 
 ### Contributors
 
+See [contributor graphs](https://github.com/collabralink-technology/quickstart-tech-challenge/graphs/contributors) for full details.
+
 |  [![Mike Dial][dial_avatar]][dial_homepage]<br/>[Mike Dial][dial_homepage] |
 |---|
 
   [dial_homepage]: https://github.com/mdial89f
   [dial_avatar]: https://avatars.githubusercontent.com/mdial89f?size=150
-
-See [graphs](https://github.com/collabralink-technology/quickstart-tech-challenge/graphs/contributors) for full details.
