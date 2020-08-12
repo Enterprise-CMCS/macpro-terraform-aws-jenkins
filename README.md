@@ -1,7 +1,8 @@
-# Jenkins ECS Terraform Module
+# terraform-aws-jenkins [![latest release](https://img.shields.io/github/release/collabralink-technology/terraform-aws-jenkins.svg)](https://github.com/collabralink-technology/terraform-aws-jenkins/releases/latest)
 
+![Collabralink](https://collabralink.com/wp-content/uploads/logo.png)
 
-A containerized Jenkins Master implementation orchestrated by ECS.
+A terraform module to provision a containerized Jenkins Master implementation orchestrated by ECS.
 - An EC2 Auto Scaling Group is created to ensure an ECS Host is available.
 - A Jenkins Master ECS Service is created to keep Jenkins up and running, despite host failure or sudden unavailability.
 - Persistence of jenkins_home is ensured with a reattachable EBS volume orchestrated by a docker plugin.
@@ -45,7 +46,12 @@ See current open [issues](https://github.com/collabralink-technology/quickstart-
 
 Please feel free to open new issues for defects or enhancements.
 
-Merge requests are being accepted.
+To contribute:
+- Fork this repository
+- Make changes in your fork
+- Open a pull request targetting this repository
+
+Pull requests are being accepted.
 
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
@@ -92,16 +98,19 @@ Merge requests are being accepted.
 See [LICENSE](LICENSE.md) for full details.
 
 ```text
-As a work of the United States Government, this project is in the public domain within the United States.
-Additionally, we waive copyright and related rights in the work worldwide through the CC0 1.0 Universal public domain dedication.
+As a work of the United States Government, this project is 
+in the public domain within the United States.
+
+Additionally, we waive copyright and related rights in the 
+work worldwide through the CC0 1.0 Universal public domain dedication.
 ```
 
 ### Contributors
+
+See [contributor graphs](https://github.com/collabralink-technology/quickstart-tech-challenge/graphs/contributors) for full details.
 
 |  [![Mike Dial][dial_avatar]][dial_homepage]<br/>[Mike Dial][dial_homepage] |
 |---|
 
   [dial_homepage]: https://github.com/mdial89f
   [dial_avatar]: https://avatars.githubusercontent.com/mdial89f?size=150
-
-See [graphs](https://github.com/collabralink-technology/quickstart-tech-challenge/graphs/contributors) for full details.
