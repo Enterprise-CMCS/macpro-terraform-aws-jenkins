@@ -10,7 +10,7 @@ terraform {
   backend "s3" {
     region  = "us-east-1"
     encrypt = true
-    key     = "github/collabralink-technology/terraform-aws-jenkins/examples/advanced"
+    key     = "github/cmsgov/terraform-aws-jenkins/examples/advanced"
   }
 }
 
