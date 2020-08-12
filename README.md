@@ -1,8 +1,8 @@
-# Jenkins ECS Terraform Module
+# terraform-aws-jenkins
 
 ![Collabralink](https://collabralink.com/wp-content/uploads/logo.png)
 
-A containerized Jenkins Master implementation orchestrated by ECS.
+A terraform module to provision a containerized Jenkins Master implementation orchestrated by ECS.
 - An EC2 Auto Scaling Group is created to ensure an ECS Host is available.
 - A Jenkins Master ECS Service is created to keep Jenkins up and running, despite host failure or sudden unavailability.
 - Persistence of jenkins_home is ensured with a reattachable EBS volume orchestrated by a docker plugin.
