@@ -17,5 +17,5 @@ RUN chown -R jenkins:jenkins /var/casc_configs
 USER jenkins
 ENV CASC_JENKINS_CONFIG /var/casc_configs
 
-# Instruct Jenkins not to run the initial setup wizard
-ENV JAVA_OPTS "-Djenkins.install.runSetupWizard=false ${JAVA_OPTS:-}"
+# Instruct Jenkins not to run the initial setup wizard and to use Eastern time
+ENV JAVA_OPTS "-Duser.timezone=America/New_York -Djenkins.install.runSetupWizard=false ${JAVA_OPTS:-}"
