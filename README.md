@@ -16,7 +16,7 @@ Terraform 0.12 +
 
 
 ## Usage
-See a common implementation (complete with VPC) [here!](examples/common)
+Examples of simple and advanced usage are provided in the [examples folder](examples)
 
 Note:  Below, we are pinning our module source to release 2.2.2 as an example.  Pinning to a specific release is a good practice, as it helps prevent bringing in breaking changes unwittingly.  The version pinned below is not guaranteed to reflect the latest version, since this block may not be kept strictly up to date.  Check the releases for new versions!
 
