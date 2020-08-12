@@ -1,6 +1,5 @@
 # Jenkins ECS Terraform Module
 
-[![pipeline status](https://gitlab.com/collabralink/delivery/terraform-aws-jenkins/badges/master/pipeline.svg)](https://gitlab.com/collabralink/delivery/terraform-aws-jenkins/-/commits/master)
 
 A containerized Jenkins Master implementation orchestrated by ECS.
 - An EC2 Auto Scaling Group is created to ensure an ECS Host is available.
@@ -18,9 +17,11 @@ Terraform 0.12 +
 ## Usage
 See a common implementation (complete with VPC) [here!](examples/common)
 
+Note:  Below, we are pinning our module source to release 2.2.2 as an example.  Pinning to a specific release is a good practice, as it helps prevent bringing in breaking changes unwittingly.  The version pinned below is not guaranteed to reflect the latest version, since this block may not be kept strictly up to date.  Check the releases for new versions!
+
 ```hcl
 module "jenkins" {
-  source                         = "git::ssh://git@gitlab.com/collabralink/delivery/terraform-aws-jenkins.git"
+  source                         = "git::https://github.com/collabralink-technology/quickstart-tech-challenge.git?ref=2.2.2"
   name                           = "jenkins"
   vpc_id                         = "vpc-abc123"
   host_instance_type             = "t3.large"
@@ -40,16 +41,11 @@ module "jenkins" {
 
 ## Contributing / To-Do
 
-See current open [issues](https://gitlab.com/collabralink/delivery/terraform-aws-jenkins/issues) or check out the [board](https://gitlab.com/collabralink/delivery/terraform-aws-jenkins/-/boards)
+See current open [issues](https://github.com/collabralink-technology/quickstart-tech-challenge/issues) or check out the [project board](https://github.com/collabralink-technology/quickstart-tech-challenge/projects/1)
 
 Please feel free to open new issues for defects or enhancements.
 
 Merge requests are being accepted.
-
-
-## Notes
-
-WIP
 
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
@@ -89,11 +85,16 @@ WIP
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 
 
-## Authors
-
-Currently maintained by [these contributors](https://gitlab.com/collabralink/delivery/terraform-aws-jenkins/-/graphs/master) at Collabralink Technologies, Inc.
-Module managed by [Mike Dial](https://gitlab.com/mdialcollabralinkcom).
-
 ## License
 
-Copyright, Collabralink Technologies Inc.
+See [LICENSE](LICENSE.md) for full details.
+
+### Contributors
+
+|  [![Mike Dial][dial_avatar]][dial_homepage]<br/>[Mike Dial][dial_homepage] |
+|---|
+
+  [dial_homepage]: https://github.com/mdial89f
+  [dial_avatar]: https://avatars.githubusercontent.com/mdial89f?size=150
+
+See [graphs](https://github.com/collabralink-technology/quickstart-tech-challenge/graphs/contributors) for full details.
