@@ -7,6 +7,10 @@
     "portMappings": [
       {
         "containerPort": 8080
+      },
+      {
+        "containerPort" : 50000,
+        "hostPort": 50000
       }
     ],
     "mountPoints": [
